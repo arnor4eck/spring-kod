@@ -28,3 +28,7 @@ logging:
     org.hibernate.orm.jdbc.bind: TRACE
     org.springframework.jdbc.core: DEBUG
     org.springframework.transaction: DEBUG
+
+jwt:
+  secret: gjhrioofgh389ur893hf87sh4r893hf89a4hywr8h4g879ah40f9h43w89zhrt398wh8rfz8h3w789tghoz8e4ti9y
+  lifetime: 600000000
