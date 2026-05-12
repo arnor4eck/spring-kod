@@ -1,0 +1,96 @@
+import org.springframework.boot.gradle.tasks.run.BootRun
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.6'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.arnor4eck'
+version = '0.0.1-SNAPSHOT'
+description = 'spring-kod'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    runtimeOnly 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-h2console'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+def readProperties() {
+    def envFile = file("${projectDir}/.env")
+    def envProps = [:]
+
+    if(envFile.exists()){
+        def envLines = envFile.readLines()
+
+        for (i in 0..< envLines.size()) {
+            def line = envLines[i].trim()
+
+            if(!line.isEmpty() && !line.startsWith("#")){
+                def lindexOfComm = line.indexOf('#');
+                if(lindexOfComm != -1)
+                    line = line.substring(0, lindexOfComm)
+
+                String[] lineParts = line.split('=')
+
+                if(lineParts.length == 2){
+                    def key = lineParts[0].trim()
+                    def value = lineParts[1].trim()
+
+                    envProps.put key, value
+                    System.setProperty(key, value)
+                    println "Системная переменная ${key} успешно установлена"
+                }else
+                    println "Пропущена строка номер ${i + 1}"
+            }
+        }
+    }else
+        println "Файл .env не найден в корне проекта"
+
+    return envProps
+}
+
+tasks.register('bootRunDev', BootRun) {
+    group = 'application'
+    description = 'Run the Spring Boot application with dev profile'
+
+    mainClass = bootRun.mainClass
+    classpath = bootRun.classpath
+
+    doFirst {
+        def envProps = readProperties()
+        envProps['spring.profiles.active'] = 'dev'
+        envProps.each { key, value -> // системные свойства в JVM Gradle
+            System.setProperty(key, value)
+        }
+
+        systemProperties = envProps  //systemProperties - это свойство задачи BootRun
+    }
+}
+

@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: SpringKod
+
+  datasource:
+    url: jdbc:h2:mem:kod
+    driver-class-name: org.h2.Driver
+    generate-unique-name: false
+    name: kod
+    username: admin
+    password: admin
+  sql:
+    init:
+      mode: always
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.springframework.jdbc.core: DEBUG
+    org.springframework.transaction: DEBUG

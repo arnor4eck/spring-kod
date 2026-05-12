@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: SpringKod
+
+server:
+  port: 8080
