@@ -30,6 +30,10 @@ public class Datasitory {
     @Enumerated(EnumType.STRING)
     private DatasitoryType datasitoryType;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DatasitoryStructure datasitoryStructure;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private User creator;
@@ -41,11 +45,3 @@ public class Datasitory {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 }
-/*
-description TEXT,
-type VARCHAR(20) CHECK (type IN ('open', 'private')) DEFAULT 'private',
-data_structure VARCHAR(20) CHECK (data_structure IN ('two_folders', 'images_csv')),
-creator_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-* */
