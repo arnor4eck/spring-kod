@@ -2,9 +2,11 @@ package com.arnor4eck.springkod.entity.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,6 +35,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     Role role = Role.USER;
+
+    @Column(nullable = false)
+    @CreationTimestamp
+    LocalDateTime createdAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
