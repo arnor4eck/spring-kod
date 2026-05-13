@@ -32,7 +32,8 @@ public class Datasitory {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private DatasitoryStructure datasitoryStructure;
+    @Builder.Default
+    private DatasitoryStructure datasitoryStructure = DatasitoryStructure.IMAGES_AND_FILE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
