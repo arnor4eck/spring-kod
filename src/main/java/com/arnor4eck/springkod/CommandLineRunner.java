@@ -19,10 +19,10 @@ public class CommandLineRunner implements org.springframework.boot.CommandLineRu
 
     private final PasswordEncoder passwordEncoder;
 
-    private record UserReq(String email, String username){};
+    private record UserReq(String email, String username){}
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
 
         List<UserReq> userReqList = List.of(
                 new UserReq("user1@mail.ru", "user1"),
