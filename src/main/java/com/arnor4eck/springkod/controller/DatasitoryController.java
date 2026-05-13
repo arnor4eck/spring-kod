@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,5 +31,13 @@ public class DatasitoryController {
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(new DatasitoryDto(
                         datasitoryService.getById(id)));
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<@NonNull Iterable<DatasitoryDto>> getAllUserDatasitory(@AuthenticationPrincipal String email) {
+        return ResponseEntity.accepted().body(datasitoryService.getAllDatasitoriesByUserEmail(email)
+                .stream()
+                .map(DatasitoryDto::new)
+                .toList());
     }
 }
