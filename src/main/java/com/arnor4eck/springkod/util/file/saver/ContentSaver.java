@@ -1,10 +1,11 @@
 package com.arnor4eck.springkod.util.file.saver;
 
-import com.arnor4eck.springkod.util.file.FileImpl;
+import java.util.List;
 
 /**
  * Сохраняет содержимое и метаданные файла
  * */
 interface ContentSaver {
-    void save(FileImpl file, String key);
+    void save(FileSaveClass saveClass);
+    void saveAll(List<FileSaveClass> saveClasses);
 }
