@@ -1,6 +1,7 @@
-package com.arnor4eck.springkod.util.file;
+package com.arnor4eck.springkod.util.file.spring;
 
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
+import com.arnor4eck.springkod.util.file.FileImpl;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
