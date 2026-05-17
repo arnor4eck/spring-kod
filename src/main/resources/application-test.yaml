@@ -1,0 +1,10 @@
+selectel:
+  s3:
+    access-key: "24a1882d23f94286a470d51d6672838e"
+    secret-key: "abb60127d5014b27980fa8707b985b23"
+    endpoint: "https://s3.ru-7.storage.selcloud.ru"
+    region: "ru-7"
+    bucket: "spring-code-s3"
+jwt:
+  secret: "very-long-dummy-secret-key-for-testing-purposes-only"
+  lifetime: 3600000

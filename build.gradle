@@ -44,8 +44,14 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
 
+    // aws for s3
+    implementation 'software.amazon.awssdk:s3:2.25.15'
+    implementation 'software.amazon.awssdk:apache-client:2.25.15'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.500'
+
+}
+def globalEnvProps = readProperties()
 tasks.named('test') {
     useJUnitPlatform()
 }

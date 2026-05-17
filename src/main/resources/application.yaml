@@ -8,3 +8,10 @@ server:
 jwt:
   secret: ${JWT_SECRET}
   lifetime: ${JWT_LIFETIME}
+
+selectel.s3:
+  access-key: ${SELECTEL_ACCESS_KEY}
+  secret-key: ${SELECTEL_SECRET_KEY}
+  endpoint: ${SELECTEL_ENDPOINT}
+  region: ${SELECTEL_REGION}
+  bucket: ${SELECTEL_BUCKET}
