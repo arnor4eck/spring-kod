@@ -50,6 +50,8 @@ dependencies {
     implementation 'software.amazon.awssdk:apache-client:2.25.15'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.500'
 
+    // File validation
+    implementation 'org.apache.tika:tika-core:3.3.0'
 }
 def globalEnvProps = readProperties()
 tasks.named('test') {
