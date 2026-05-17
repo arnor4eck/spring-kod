@@ -1,5 +1,8 @@
 package com.arnor4eck.springkod.util.file_validation;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class MarkupFilesValidation implements FileValidation {
     @Override
     public boolean validate(byte[] bytes) {
