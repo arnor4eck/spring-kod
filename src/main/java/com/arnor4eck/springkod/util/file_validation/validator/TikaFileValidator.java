@@ -10,12 +10,12 @@ public class TikaFileValidator implements FileValidator{
 
     private final FileValidation imageFilesValidation;
 
-    private final FileValidation tikaMarkupFilesValidation;
+    private final FileValidation markupFilesValidation;
 
     public TikaFileValidator(@Qualifier("tikaImageFilesValidation") FileValidation imageFilesValidation,
                              @Qualifier("tikaMarkupFilesValidation") FileValidation markupFilesValidation){
         this.imageFilesValidation = imageFilesValidation;
-        this.tikaMarkupFilesValidation = markupFilesValidation;
+        this.markupFilesValidation = markupFilesValidation;
     }
 
     @Override
@@ -32,6 +32,6 @@ public class TikaFileValidator implements FileValidator{
     }
 
     private boolean validateMarkupFile(byte[] bytes){
-        return tikaMarkupFilesValidation.validate(bytes);
+        return markupFilesValidation.validate(bytes);
     }
 }
