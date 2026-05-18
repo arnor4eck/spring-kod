@@ -32,6 +32,10 @@ public class DatasitoryMember {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DatasitoryMemberRole datasitoryMemberRole;
+
     @CreationTimestamp
     private LocalDateTime joinedAt;
 }
