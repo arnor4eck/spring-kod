@@ -22,8 +22,8 @@ public class DatasitoryMembersService {
 
     private final UserDetailsService userDetailsService;
 
-    public DatasitoryMember addMember(AddMemberToDatasitoryRequest addMemberToDatasitoryRequest){
-        Datasitory datasitory = findDatasitoryByIdOrThrow(addMemberToDatasitoryRequest.datasitoryId());
+    public DatasitoryMember addMember(long datasitoryId, AddMemberToDatasitoryRequest addMemberToDatasitoryRequest){
+        Datasitory datasitory = findDatasitoryByIdOrThrow(datasitoryId);
         User member = findUserByEmailOrThrow(addMemberToDatasitoryRequest.memberEmail());
 
         DatasitoryMemberRole memberRole = DatasitoryMemberRole

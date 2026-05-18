@@ -40,8 +40,9 @@ public class DatasitoryMembersServiceTests {
     @Test
     public void testAddMemberSuccess(){
         String memberEmail = "member@mail.ru";
+        long datasitoryId = 1L;
 
-        AddMemberToDatasitoryRequest request = createRequest(1, memberEmail,
+        AddMemberToDatasitoryRequest request = createRequest(memberEmail,
                 DatasitoryMemberRole.ANALYST);
         Datasitory datasitory = createDatasitory(createUser("owner@mail.ru"));
         User newMember = createUser(memberEmail);
@@ -53,7 +54,7 @@ public class DatasitoryMembersServiceTests {
         when(datasitoryMemberRepository.save(any()))
                 .thenAnswer(incov -> incov.getArgument(0));
 
-        DatasitoryMember member = datasitoryMembersService.addMember(request);
+        DatasitoryMember member = datasitoryMembersService.addMember(datasitoryId, request);
 
         Assertions.assertNotNull(member);
         Assertions.assertEquals(memberEmail, member.getUser().getEmail());
@@ -64,13 +65,13 @@ public class DatasitoryMembersServiceTests {
     public void testAddMemberDatasitoryNotFound(){
         long datasitoryId = 1;
 
-        AddMemberToDatasitoryRequest request = createRequest(datasitoryId, "member@mail.ru",
+        AddMemberToDatasitoryRequest request = createRequest("member@mail.ru",
                 DatasitoryMemberRole.ANALYST);
 
         when(datasitoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         DatasitoryNotFoundException ex = Assertions.assertThrows(DatasitoryNotFoundException.class,
-                () ->  datasitoryMembersService.addMember(request));
+                () ->  datasitoryMembersService.addMember(datasitoryId, request));
 
         Assertions.assertEquals(ex.getMessage(),
                 String.format("Датазитория с id %d нет.", datasitoryId));
@@ -78,7 +79,7 @@ public class DatasitoryMembersServiceTests {
 
     @Test
     public void testAddMemberMemberNotFound(){
-        AddMemberToDatasitoryRequest request = createRequest(1, "member@mail.ru",
+        AddMemberToDatasitoryRequest request = createRequest("member@mail.ru",
                 DatasitoryMemberRole.ANALYST);
 
         Datasitory datasitory = createDatasitory(createUser("owner@mail.ru"));
@@ -89,12 +90,12 @@ public class DatasitoryMembersServiceTests {
                 .thenThrow(new UserNotFoundException("Пользователь не найден"));
 
         Assertions.assertThrows(UserNotFoundException.class,
-                () ->  datasitoryMembersService.addMember(request));
+                () ->  datasitoryMembersService.addMember(1L, request));
     }
 
-    private AddMemberToDatasitoryRequest createRequest(long id, String email,
+    private AddMemberToDatasitoryRequest createRequest(String email,
                                                        DatasitoryMemberRole role){
-        return new AddMemberToDatasitoryRequest(id, email, role.toString());
+        return new AddMemberToDatasitoryRequest(email, role.toString());
     }
 
     private Datasitory createDatasitory(User creator){
