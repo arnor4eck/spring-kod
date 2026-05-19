@@ -16,7 +16,7 @@ public class DatasitoryMemberController {
 
     private final DatasitoryMembersService datasitoryMembersService;
 
-    @PostMapping("/{id}") // TODO TEST IT
+    @PostMapping("/{id}")
     public ResponseEntity<@NonNull DatasitoryMemberDto> addMember(@PathVariable long id,
                                                                    @RequestBody @Valid AddMemberToDatasitoryRequest request){
         return ResponseEntity.ok(new DatasitoryMemberDto(
