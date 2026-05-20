@@ -2,6 +2,8 @@ package com.arnor4eck.springkod.controller;
 
 import com.arnor4eck.springkod.service.DatasitoryService;
 import com.arnor4eck.springkod.util.dto.datasitory.DatasitoryDto;
+import com.arnor4eck.springkod.util.dto.datasitory_member.DatasitoryMemberDto;
+import com.arnor4eck.springkod.util.request.AddMemberToDatasitoryRequest;
 import com.arnor4eck.springkod.util.request.datasitory.CreateDatasitoryRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -39,5 +41,22 @@ public class DatasitoryController {
                 .stream()
                 .map(DatasitoryDto::new)
                 .toList());
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<@NonNull Iterable<DatasitoryDto>> getAllUserDatasitory(@PathVariable long id) {
+        return ResponseEntity.accepted()
+                .body(datasitoryService.getAllDatasitoriesByUserId(id)
+                    .stream()
+                    .map(DatasitoryDto::new)
+                    .toList());
+    }
+
+    @PostMapping("/{id}/members") // TODO проверка что добавляет владелец
+    public ResponseEntity<@NonNull DatasitoryMemberDto> addMember(@PathVariable long id,
+                                                                  @RequestBody @Valid AddMemberToDatasitoryRequest request){
+        return ResponseEntity.ok(new DatasitoryMemberDto(
+                datasitoryService.addMember(id, request))
+        );
     }
 }

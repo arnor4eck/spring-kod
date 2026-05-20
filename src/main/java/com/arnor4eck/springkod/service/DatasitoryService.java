@@ -2,9 +2,11 @@ package com.arnor4eck.springkod.service;
 
 import com.arnor4eck.springkod.entity.datasitory.Datasitory;
 import com.arnor4eck.springkod.entity.datasitory.DatasitoryType;
+import com.arnor4eck.springkod.entity.datasitory_member.DatasitoryMember;
 import com.arnor4eck.springkod.entity.user.User;
 import com.arnor4eck.springkod.repository.DatasitoryRepository;
 import com.arnor4eck.springkod.repository.UserRepository;
+import com.arnor4eck.springkod.util.request.AddMemberToDatasitoryRequest;
 import com.arnor4eck.springkod.util.request.datasitory.CreateDatasitoryRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class DatasitoryService {
+
+    private final DatasitoryMembersService datasitoryMembersService;
 
     private final DatasitoryRepository datasitoryRepository;
 
@@ -44,4 +48,14 @@ public class DatasitoryService {
         return datasitoryRepository.findAllByUserEmail(email); // TODO проверить, попадают ли даты, в которх пользователь как юзер
     }
 
+    public List<Datasitory> getAllDatasitoriesByUserId(long userId) {
+        String userEmail = userRepository.getEmailById(userId);
+
+        return datasitoryRepository.findAllByUserEmail(userEmail);
+    }
+
+    public DatasitoryMember addMember(long datasitoryId,
+                                      AddMemberToDatasitoryRequest request){
+        return datasitoryMembersService.addMember(datasitoryId, request);
+    }
 }
