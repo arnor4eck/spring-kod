@@ -56,6 +56,9 @@ dependencies {
     // Cloudinary
     implementation 'com.cloudinary:cloudinary-http44:1.39.0'
     implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+
+    // DB
+    runtimeOnly 'org.postgresql:postgresql'
 }
 def globalEnvProps = readProperties()
 tasks.named('test') {
