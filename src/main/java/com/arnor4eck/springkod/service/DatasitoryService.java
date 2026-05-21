@@ -6,6 +6,7 @@ import com.arnor4eck.springkod.entity.datasitory_member.DatasitoryMember;
 import com.arnor4eck.springkod.entity.user.User;
 import com.arnor4eck.springkod.repository.DatasitoryRepository;
 import com.arnor4eck.springkod.repository.UserRepository;
+import com.arnor4eck.springkod.util.dto.datasitory.DatasitoryDto;
 import com.arnor4eck.springkod.util.request.AddMemberToDatasitoryRequest;
 import com.arnor4eck.springkod.util.request.datasitory.CreateDatasitoryRequest;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -57,5 +59,12 @@ public class DatasitoryService {
     public DatasitoryMember addMember(long datasitoryId,
                                       AddMemberToDatasitoryRequest request){
         return datasitoryMembersService.addMember(datasitoryId, request);
+    }
+
+    public List<Datasitory> getDatasitoriesByIds(List<Long> ids) {
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return datasitoryRepository.findAllById(ids);
     }
 }

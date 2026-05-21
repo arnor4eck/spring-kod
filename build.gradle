@@ -52,6 +52,7 @@ dependencies {
 
     // File validation
     implementation 'org.apache.tika:tika-core:3.3.0'
+
 }
 def globalEnvProps = readProperties()
 tasks.named('test') {
