@@ -2,10 +2,12 @@ package com.arnor4eck.springkod.util.file.spring;
 
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
 import com.arnor4eck.springkod.util.file.FileImpl;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Component
 public class FileSpringLoaderImpl implements FileSpringLoader {
     @Override
     public FileImpl load(MultipartFile file) throws IOException {

@@ -20,7 +20,6 @@ public class DatabaseContentSaver implements ContentSaver { // TODO Саша п�
             throw new UploadFileException(
                     String.format("Error on upload file with key %s", saveClass.key()));
         }
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

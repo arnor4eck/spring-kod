@@ -19,7 +19,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class S3Service {
 
-
     private final AmazonS3 s3Client;
 
     @Value("${selectel.s3.bucket}")
