@@ -2,6 +2,7 @@ package com.arnor4eck.springkod.util.file.saver;
 
 import com.arnor4eck.springkod.entity.datasitory.Datasitory;
 import com.arnor4eck.springkod.entity.datasitory_file.DatasitoryFile;
+import com.arnor4eck.springkod.entity.datasitory_file.FileType;
 import com.arnor4eck.springkod.entity.datasitory_file.ImageUrl;
 import com.arnor4eck.springkod.repository.DatasitoryFileRepository;
 import com.arnor4eck.springkod.repository.ImageUrlRepository;
@@ -33,16 +34,17 @@ public class DatabaseFileSaver implements FileSaver {
 
         DatasitoryFile df = datasitoryFileRepository.save(datasitoryFile);
         // --
-        try{
-            String url = imageUrlSaver.upload(saveClass.file().getBytes());
-            imageUrlsRepository.save(ImageUrl.builder()
-                    .datasitoryFile(df)
-                    .url(url)
-                    .build());
-        } catch (IOException e) {
-            log.warn(e.getMessage());
+        if(saveClass.file().getFileType() == FileType.IMAGE) {
+            try {
+                String url = imageUrlSaver.upload(saveClass.file().getBytes());
+                imageUrlsRepository.save(ImageUrl.builder()
+                        .datasitoryFile(df)
+                        .url(url)
+                        .build());
+            } catch (IOException e) {
+                log.warn(e.getMessage());
+            }
         }
-
         // --
         contentSaver.save(saveClass);
     }

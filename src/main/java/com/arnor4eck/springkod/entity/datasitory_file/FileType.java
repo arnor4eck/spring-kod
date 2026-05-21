@@ -1,5 +1,6 @@
 package com.arnor4eck.springkod.entity.datasitory_file;
 
 public enum FileType {
-    IMAGE, MARKUP_FILE
+    IMAGE, MARKUP_FILE,
+    PROBABILITY, METADATA
 }

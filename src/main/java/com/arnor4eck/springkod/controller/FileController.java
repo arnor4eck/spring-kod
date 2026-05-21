@@ -1,5 +1,6 @@
 package com.arnor4eck.springkod.controller;
 
+import com.arnor4eck.springkod.entity.datasitory_file.FileType;
 import com.arnor4eck.springkod.service.FileService;
 import com.arnor4eck.springkod.util.dto.file.FileUrlDto;
 import com.arnor4eck.springkod.util.file.FileImpl;
@@ -42,7 +43,7 @@ public class FileController {
 
     @GetMapping("/image/{name}")
     public ResponseEntity<@NonNull Resource> getImage(@PathVariable("name") String name) throws IOException {
-        FileImpl file = fileService.loadImage(name);
+        FileImpl file = fileService.loadFile(name);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .contentType(MediaType.parseMediaType(file.getContentType())) // TODO
@@ -56,22 +57,57 @@ public class FileController {
                                                     @RequestParam("file") MultipartFile file) {
         // TODO ЗАГРУЗКА ВЕРОЯТНОСТЕЙ fileService.saveImages(files, id);
 
+        fileService.saveProbability(file, id);
+
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/probability/{id}")
+    public ResponseEntity<@NonNull Resource> getProbability(@PathVariable("id") long id) throws IOException {
+        FileImpl file = fileService.loadFile(id, FileType.PROBABILITY);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .contentType(MediaType.parseMediaType(file.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + file.getOriginalFilename() + "\"")
+                .body(new ByteArrayResource(file.getBytes()));
     }
 
     @PostMapping("/metadata/{id}")
     public ResponseEntity<@NonNull Void> saveMetadata(@PathVariable("id") long id,
                                                     @RequestParam("file") MultipartFile file) {
-        // TODO ЗАГРУЗКА МЕТАДАННЫХ fileService.saveImages(files, id);
+        fileService.saveMetadata(file, id);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/metadata/{id}")
+    public ResponseEntity<@NonNull Resource> getMetadata(@PathVariable("id") long id) throws IOException {
+        FileImpl file = fileService.loadFile(id, FileType.METADATA);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .contentType(MediaType.parseMediaType(file.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + file.getOriginalFilename() + "\"")
+                .body(new ByteArrayResource(file.getBytes()));
     }
 
     @PostMapping("/markup/{id}")
     public ResponseEntity<@NonNull Void> saveMarkup(@PathVariable("id") long id,
                                                       @RequestParam("file") MultipartFile file) {
-        // TODO ЗАГРУЗКА РАЗМЕТКИ fileService.saveImages(files, id);
+        fileService.saveMarkup(file, id);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/markup/{id}")
+    public ResponseEntity<@NonNull Resource> getMarkup(@PathVariable("id") long id) throws IOException {
+        FileImpl file = fileService.loadFile(id, FileType.MARKUP_FILE);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .contentType(MediaType.parseMediaType(file.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + file.getOriginalFilename() + "\"")
+                .body(new ByteArrayResource(file.getBytes()));
     }
 }

@@ -22,7 +22,9 @@ public class FileSpringLoaderImpl implements FileSpringLoader {
             return FileType.IMAGE;
         } else if(isMarkupFile(fileType)){
             return FileType.MARKUP_FILE;
-        }
+        } else if (isProbabilityFile(fileType)) {
+            return FileType.PROBABILITY;
+        } // TODO for metadata
         throw new IllegalArgumentException("Invalid file type");
     }
 
@@ -31,6 +33,10 @@ public class FileSpringLoaderImpl implements FileSpringLoader {
     }
 
     private boolean isMarkupFile(String fileType){
-        return fileType.equals("text/csv") || fileType.equals("application/json");
+        return fileType.equals("text/csv");
+    }
+
+    private boolean isProbabilityFile(String fileType){
+        return fileType.equals("application/json");
     }
 }

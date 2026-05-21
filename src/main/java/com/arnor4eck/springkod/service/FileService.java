@@ -2,6 +2,7 @@ package com.arnor4eck.springkod.service;
 
 import com.arnor4eck.springkod.entity.datasitory.Datasitory;
 import com.arnor4eck.springkod.entity.datasitory_file.DatasitoryFile;
+import com.arnor4eck.springkod.entity.datasitory_file.FileType;
 import com.arnor4eck.springkod.entity.datasitory_file.ImageUrl;
 import com.arnor4eck.springkod.repository.DatasitoryFileRepository;
 import com.arnor4eck.springkod.repository.DatasitoryRepository;
@@ -40,7 +41,7 @@ public class FileService {
     private final ImageUrlRepository imageUrlRepository;
 
     public void saveImages(List<MultipartFile> files, long datasitoryId){
-        // TODO проверка на битые файлы
+        // TODO проверка на битые файлы ОНИ СОХРАНЯЮТСЯ В БД НА УРОВНЕ ENUM
 
         List<FileImpl> mapped = mapAllFiles(files);
         List<FileSaveClass> saveClasses = mapped.stream()
@@ -65,25 +66,19 @@ public class FileService {
         }
     }
 
+    private FileImpl map(MultipartFile file) {
+        try{
+            return fileSpringLoader.load(file);
+        }catch (IOException e){
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
+
     private String generateKey(FileImpl file, long datasitoryId){
         return String.format("%d-%s", datasitoryId, file.getOriginalFilename());
     }
 
     public List<ImageUrl> loadImages(long datasitoryId) {
-        //Datasitory datasitory = findDatasitoryById(datasitoryId);
-
-        /*// TODO ТОЛЬКО  ФОТО, ЩАС ПОДГРУЖАЕТСЯ ВСЁ
-        List<DatasitoryFile> files = datasitoryFileRepository.findAllByDatasitory(datasitory);
-
-        List<FileImpl> found = new LinkedList<>();
-        for(DatasitoryFile file : files) {
-            try{
-                found.add(fileLoader.load(file.getFileId()));
-            }catch(FileNotFoundException e){
-                log.warn("Файл {} не найден, пропуск", file.getFileId());
-            }
-        }*/
-
         return imageUrlRepository.findAllByDatasitoryId(datasitoryId);
     }
 
@@ -93,12 +88,43 @@ public class FileService {
                         "Датазитоия с id %d нет".formatted(datasitoryId)));
     }
 
-    public FileImpl loadImage(String name) {
+    public FileImpl loadFile(String name) {
         try{
             return fileLoader.load(name);
         }catch(FileNotFoundException e){
             log.warn("Файл {} не найден, пропуск", name);
             throw new RuntimeException(e);
         }
+    }
+
+    public FileImpl loadFile(long datasitoryId, FileType fileType) {
+        try{
+            return fileLoader.load(datasitoryId, fileType);
+        }catch(FileNotFoundException e){
+            log.warn("Файл в датазитори с id {} не найден, пропуск", datasitoryId);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveProbability(MultipartFile file, long datasitoryId) {
+        FileImpl fileImpl = map(file);
+
+        Datasitory datasitory = findDatasitoryById(datasitoryId);
+        fileSaver.save(new FileSaveClass(generateKey(fileImpl, datasitoryId), fileImpl), datasitory);
+    }
+
+    public void saveMetadata(MultipartFile file, long datasitoryId) {
+        FileImpl fileImpl = map(file);
+        fileImpl.setFileType(FileType.METADATA); // TODO ПЕРЕДЕЛАТЬ
+
+        Datasitory datasitory = findDatasitoryById(datasitoryId);
+        fileSaver.save(new FileSaveClass(generateKey(fileImpl, datasitoryId), fileImpl), datasitory);
+    }
+
+    public void saveMarkup(MultipartFile file, long datasitoryId) {
+        FileImpl fileImpl = map(file);
+
+        Datasitory datasitory = findDatasitoryById(datasitoryId);
+        fileSaver.save(new FileSaveClass(generateKey(fileImpl, datasitoryId), fileImpl), datasitory);
     }
 }
