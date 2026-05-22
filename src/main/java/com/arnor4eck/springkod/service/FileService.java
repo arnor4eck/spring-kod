@@ -1,10 +1,8 @@
 package com.arnor4eck.springkod.service;
 
 import com.arnor4eck.springkod.entity.datasitory.Datasitory;
-import com.arnor4eck.springkod.entity.datasitory_file.DatasitoryFile;
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
 import com.arnor4eck.springkod.entity.datasitory_file.ImageUrl;
-import com.arnor4eck.springkod.repository.DatasitoryFileRepository;
 import com.arnor4eck.springkod.repository.DatasitoryRepository;
 import com.arnor4eck.springkod.repository.ImageUrlRepository;
 import com.arnor4eck.springkod.util.exception.DatasitoryNotFoundException;
