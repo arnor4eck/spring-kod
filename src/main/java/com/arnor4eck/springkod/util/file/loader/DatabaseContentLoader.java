@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class DatabaseContentLoader implements ContentLoader{ // TODO Саша после реализации своей мега-задумки
+public class DatabaseContentLoader implements ContentLoader{
     private final S3Service s3Service;
     @Override
     public FileImpl load(String key) {

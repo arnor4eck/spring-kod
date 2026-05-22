@@ -1,5 +1,6 @@
 package com.arnor4eck.springkod.config;
 
+import com.arnor4eck.springkod.util.exception.NotFoundException;
 import com.arnor4eck.springkod.util.factory.ExceptionResponseFactory;
 import com.arnor4eck.springkod.util.response.ExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -93,5 +94,12 @@ public class ControllerAdvice {
                                                      HttpServletResponse response){
         return exceptionResponseFactory.create(e.getReason(),
                 response, HttpStatus.valueOf(e.getStatusCode().value()));
+    }
+
+    @ExceptionHandler({NotFoundException.class})
+    public ExceptionResponse notFoundException(NotFoundException e,
+                                                 HttpServletResponse response){
+        return exceptionResponseFactory.create(e.getMessage(),
+                response, HttpStatus.NOT_FOUND);
     }
 }

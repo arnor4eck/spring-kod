@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class DatabaseContentSaver implements ContentSaver { // TODO Саша после реализации своей мега-задумки
+public class DatabaseContentSaver implements ContentSaver {
     private final S3Service s3Service;
     @Override
     public void save(FileSaveClass saveClass) {

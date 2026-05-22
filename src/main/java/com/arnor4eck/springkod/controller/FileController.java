@@ -55,55 +55,43 @@ public class FileController {
     @PostMapping("/probability/{id}")
     public ResponseEntity<@NonNull Void> saveProbability(@PathVariable("id") long id,
                                                     @RequestParam("file") MultipartFile file) {
-        // TODO ЗАГРУЗКА ВЕРОЯТНОСТЕЙ fileService.saveImages(files, id);
-
-        fileService.saveProbability(file, id);
+        fileService.saveFile(file, id, FileType.PROBABILITY);
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/probability/{id}")
     public ResponseEntity<@NonNull Resource> getProbability(@PathVariable("id") long id) throws IOException {
-        FileImpl file = fileService.loadFile(id, FileType.PROBABILITY);
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED)
-                .contentType(MediaType.parseMediaType(file.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + file.getOriginalFilename() + "\"")
-                .body(new ByteArrayResource(file.getBytes()));
+        return inlineFile(fileService.loadFile(id, FileType.PROBABILITY));
     }
 
     @PostMapping("/metadata/{id}")
     public ResponseEntity<@NonNull Void> saveMetadata(@PathVariable("id") long id,
                                                     @RequestParam("file") MultipartFile file) {
-        fileService.saveMetadata(file, id);
+        fileService.saveFile(file, id, FileType.METADATA);
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/metadata/{id}")
     public ResponseEntity<@NonNull Resource> getMetadata(@PathVariable("id") long id) throws IOException {
-        FileImpl file = fileService.loadFile(id, FileType.METADATA);
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED)
-                .contentType(MediaType.parseMediaType(file.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + file.getOriginalFilename() + "\"")
-                .body(new ByteArrayResource(file.getBytes()));
+        return inlineFile(fileService.loadFile(id, FileType.METADATA));
     }
 
     @PostMapping("/markup/{id}")
     public ResponseEntity<@NonNull Void> saveMarkup(@PathVariable("id") long id,
                                                       @RequestParam("file") MultipartFile file) {
-        fileService.saveMarkup(file, id);
+        fileService.saveFile(file, id, FileType.MARKUP_FILE);
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/markup/{id}")
     public ResponseEntity<@NonNull Resource> getMarkup(@PathVariable("id") long id) throws IOException {
-        FileImpl file = fileService.loadFile(id, FileType.MARKUP_FILE);
+        return inlineFile(fileService.loadFile(id, FileType.MARKUP_FILE));
+    }
 
+    private ResponseEntity<@NonNull Resource> inlineFile(FileImpl file) throws IOException {
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .contentType(MediaType.parseMediaType(file.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION,

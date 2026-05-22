@@ -36,12 +36,10 @@ public class FileService {
 
     private final DatasitoryRepository datasitoryRepository;
 
-    private final DatasitoryFileRepository datasitoryFileRepository;
-
     private final ImageUrlRepository imageUrlRepository;
 
     public void saveImages(List<MultipartFile> files, long datasitoryId){
-        // TODO проверка на битые файлы ОНИ СОХРАНЯЮТСЯ В БД НА УРОВНЕ ENUM
+        // TODO проверка на битые файлы ОНИ СОХРАНЯЮТСЯ В БД НА УРОВНЕ ENUM ???
 
         List<FileImpl> mapped = mapAllFiles(files);
         List<FileSaveClass> saveClasses = mapped.stream()
@@ -106,14 +104,27 @@ public class FileService {
         }
     }
 
-    public void saveProbability(MultipartFile file, long datasitoryId) {
-        FileImpl fileImpl = map(file);
-
-        Datasitory datasitory = findDatasitoryById(datasitoryId);
-        fileSaver.save(new FileSaveClass(generateKey(fileImpl, datasitoryId), fileImpl), datasitory);
+    private void saveProbability(MultipartFile file, long datasitoryId) {
+        saveFile(file, datasitoryId);
     }
 
-    public void saveMetadata(MultipartFile file, long datasitoryId) {
+    public void saveFile(MultipartFile file, long datasitoryId,
+                         FileType fileType) {
+        switch (fileType) {
+            case MARKUP_FILE:
+                saveMarkup(file, datasitoryId);
+                break;
+            case PROBABILITY:
+                saveProbability(file, datasitoryId);
+                break;
+            case METADATA:
+                saveMetadata(file, datasitoryId);
+                break;
+            default: throw new UnsupportedOperationException("Не поддерживается ");
+        }
+    }
+
+    private void saveMetadata(MultipartFile file, long datasitoryId) {
         FileImpl fileImpl = map(file);
         fileImpl.setFileType(FileType.METADATA); // TODO ПЕРЕДЕЛАТЬ
 
@@ -121,7 +132,11 @@ public class FileService {
         fileSaver.save(new FileSaveClass(generateKey(fileImpl, datasitoryId), fileImpl), datasitory);
     }
 
-    public void saveMarkup(MultipartFile file, long datasitoryId) {
+    private void saveMarkup(MultipartFile file, long datasitoryId) {
+        saveFile(file, datasitoryId);
+    }
+
+    private void saveFile(MultipartFile file, long datasitoryId){
         FileImpl fileImpl = map(file);
 
         Datasitory datasitory = findDatasitoryById(datasitoryId);
