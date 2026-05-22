@@ -5,12 +5,14 @@ import com.arnor4eck.springkod.entity.datasitory_file.FileType;
 import com.arnor4eck.springkod.repository.DatasitoryFileRepository;
 import com.arnor4eck.springkod.util.file.FileImpl;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
 import java.util.List;
 
 @Component
+@Slf4j
 @AllArgsConstructor
 public class DatabaseFileLoader implements FileLoader {
 
@@ -22,7 +24,7 @@ public class DatabaseFileLoader implements FileLoader {
     public FileImpl load(String key) throws FileNotFoundException {
         if(!datasitoryFileRepository.existsByFileId(key))
             throw new FileNotFoundException("Файл %s не существует.".formatted(key));
-
+        log.info("Файл {} найден в базе данных", key);
         return contentLoader.load(key);
     }
 
@@ -35,6 +37,8 @@ public class DatabaseFileLoader implements FileLoader {
         if(files.size() != 1)
             throw new RuntimeException("Файл не один"); // TODO customize
 
-        return contentLoader.load(files.get(0).getFileId());
+        log.info("Файл {} для датазитория {} найден в базе данных", fileType.name(), datasitoryId);
+
+        return contentLoader.load(files.getFirst().getFileId());
     }
 }

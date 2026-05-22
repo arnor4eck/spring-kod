@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
@@ -33,6 +32,7 @@ public class DatabaseFileSaver implements FileSaver {
         DatasitoryFile datasitoryFile = createDatasitoryFile(saveClass, datasitory);
 
         DatasitoryFile df = datasitoryFileRepository.save(datasitoryFile);
+        log.info("Файл {} сохранен в базу данных", df.getFileId());
         // --
         if(saveClass.file().getFileType() == FileType.IMAGE) {
             try {

@@ -38,6 +38,7 @@ public class FileService {
 
     public void saveImages(List<MultipartFile> files, long datasitoryId){
         // TODO проверка на битые файлы ОНИ СОХРАНЯЮТСЯ В БД НА УРОВНЕ ENUM ???
+        log.info("Сохранение {} фото для датазитория {}", files.size(), datasitoryId);
 
         List<FileImpl> mapped = mapAllFiles(files);
         List<FileSaveClass> saveClasses = mapped.stream()
@@ -75,6 +76,7 @@ public class FileService {
     }
 
     public List<ImageUrl> loadImages(long datasitoryId) {
+        log.info("Загрузка всех фото датазитория {}", datasitoryId);
         return imageUrlRepository.findAllByDatasitoryId(datasitoryId);
     }
 
@@ -120,6 +122,8 @@ public class FileService {
                 break;
             default: throw new UnsupportedOperationException("Не поддерживается ");
         }
+
+        log.info("Сохранение {} файла {} для датазитория {}", fileType.name(), file.getOriginalFilename(), datasitoryId);
     }
 
     private void saveMetadata(MultipartFile file, long datasitoryId) {
