@@ -49,6 +49,11 @@ services:
       - app-network
     command: java -jar app.jar
 
+  ml_service:
+    build: ml_service/.
+    networks:
+      - app-network
+
 volumes:
   postgres_data:
 

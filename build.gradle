@@ -59,6 +59,9 @@ dependencies {
 
     // DB
     runtimeOnly 'org.postgresql:postgresql'
+
+    // RestClient
+    implementation 'org.springframework.boot:spring-boot-starter-restclient'
 }
 def globalEnvProps = readProperties()
 tasks.named('test') {
