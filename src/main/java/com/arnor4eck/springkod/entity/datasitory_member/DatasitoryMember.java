@@ -5,6 +5,8 @@ import com.arnor4eck.springkod.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -24,8 +26,9 @@ public class DatasitoryMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "datasitory_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Datasitory datasitory;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -2,6 +2,8 @@ package com.arnor4eck.springkod.entity.datasitory_file;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "image_url")
@@ -17,6 +19,7 @@ public class ImageUrl {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "datasitory_file_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private DatasitoryFile datasitoryFile;
 
     @Column(nullable = false, name = "url")
