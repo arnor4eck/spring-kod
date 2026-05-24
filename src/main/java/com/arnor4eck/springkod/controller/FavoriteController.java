@@ -12,18 +12,20 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/favorite")
+@RequestMapping("/api/v1/favorite")
 public class FavoriteController {
-    final FavoriteService favoriteService;
-    final DatasitoryService datasitoryService;
+
+    private final FavoriteService favoriteService;
+    private final DatasitoryService datasitoryService;
+
     @PostMapping("/{id}")
     public ResponseEntity<Void> addFavorite(@AuthenticationPrincipal String email,
-            @PathVariable long id) {
-        favoriteService.addFavorite(email, id);
+            @PathVariable("id") long datasitoryId) {
+        favoriteService.addFavorite(email, datasitoryId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/")
+    @GetMapping("/my")
     public ResponseEntity<FavoriteListResponseDto> getFavoriteDatasitories(
             @AuthenticationPrincipal String email){
         var datasitoriesIds = favoriteService.getFavoritesIds(email);
@@ -36,8 +38,8 @@ public class FavoriteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFavoriteByDatasitoryId(@AuthenticationPrincipal String email,
-            @PathVariable long id){
-      favoriteService.deleteFavorite(email, id);
+            @PathVariable("id") long datasitoryId){
+      favoriteService.deleteFavorite(email, datasitoryId);
       return ResponseEntity.ok().build();
     }
 }
