@@ -73,4 +73,11 @@ public class DatasitoryController {
                         "attachment; filename=dataset_" + id + ".zip")
                 .body(datasitoryService.export(id));
     }
+
+    @DeleteMapping("/{id}") // TODO проверка что удаляет владелец
+    public ResponseEntity<@NonNull Void> deleteDatasitoryById(@PathVariable("id") long id) {
+        datasitoryService.delete(id);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
 }
