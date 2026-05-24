@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class TikaImageFilesValidation implements FileValidation {
+public class TikaImageFileValidator implements FileValidation {
 
     private final Tika tika;
 
@@ -14,6 +14,8 @@ public class TikaImageFilesValidation implements FileValidation {
 
     @Override
     public boolean validate(byte[] bytes) {
-        return tika.detect(bytes).startsWith(IMAGE_STRING);
+        String detected = tika.detect(bytes);
+
+        return detected.startsWith(IMAGE_STRING);
     }
 }

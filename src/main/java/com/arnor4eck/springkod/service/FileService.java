@@ -6,17 +6,18 @@ import com.arnor4eck.springkod.entity.datasitory_file.ImageUrl;
 import com.arnor4eck.springkod.repository.DatasitoryRepository;
 import com.arnor4eck.springkod.repository.ImageUrlRepository;
 import com.arnor4eck.springkod.util.exception.DatasitoryNotFoundException;
+import com.arnor4eck.springkod.util.exception.FileNotFoundInStorageException;
 import com.arnor4eck.springkod.util.file.FileImpl;
 import com.arnor4eck.springkod.util.file.loader.FileLoader;
 import com.arnor4eck.springkod.util.file.saver.FileSaveClass;
 import com.arnor4eck.springkod.util.file.saver.FileSaver;
 import com.arnor4eck.springkod.util.file.spring.FileSpringLoader;
+import com.arnor4eck.springkod.util.file_validation.validator.TikaFileValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,11 +37,13 @@ public class FileService {
 
     private final ImageUrlRepository imageUrlRepository;
 
+    private final TikaFileValidator tikaFileValidator;
+
     public void saveImages(List<MultipartFile> files, long datasitoryId){
         // TODO проверка на битые файлы ОНИ СОХРАНЯЮТСЯ В БД НА УРОВНЕ ENUM ??? <- да, добавить отдельный enum
         log.info("Сохранение {} фото для датазитория {}", files.size(), datasitoryId);
 
-        List<FileImpl> mapped = mapAllFiles(files);
+        List<FileImpl> mapped = mapAllImages(files);
         List<FileSaveClass> saveClasses = mapped.stream()
                                 .map(fi ->
                                     new FileSaveClass(generateKey(fi, datasitoryId), fi))
@@ -50,12 +53,19 @@ public class FileService {
         fileSaver.saveAll(saveClasses, datasitory);
     }
 
-    private List<FileImpl> mapAllFiles(List<MultipartFile> files) {
+    private List<FileImpl> mapAllImages(List<MultipartFile> files) {
         try {
             List<FileImpl> mapped = new LinkedList<>();
 
             for (MultipartFile file : files) {
-                mapped.add(fileSpringLoader.load(file));
+                FileImpl img = fileSpringLoader.load(file);
+
+                if(!tikaFileValidator.validate(img.getBytes(), FileType.IMAGE)){
+                    log.warn("Фото {} некорректно", img.getOriginalFilename());
+                    img.setFileType(FileType.UNKNOWN_IMAGE);
+                }
+
+                mapped.add(img);
             }
             return mapped;
         } catch (IOException e) {
@@ -89,7 +99,7 @@ public class FileService {
     public FileImpl loadFile(String name) {
         try{
             return fileLoader.load(name);
-        }catch(FileNotFoundException e){
+        }catch(FileNotFoundInStorageException e){
             log.warn("Файл {} не найден, пропуск", name);
             throw new RuntimeException(e);
         }
@@ -98,7 +108,7 @@ public class FileService {
     public FileImpl loadFile(long datasitoryId, FileType fileType) {
         try{
             return fileLoader.load(datasitoryId, fileType);
-        }catch(FileNotFoundException e){
+        }catch(FileNotFoundInStorageException e){
             log.warn("Файл в датазитори с id {} не найден, пропуск", datasitoryId);
             throw new RuntimeException(e);
         }

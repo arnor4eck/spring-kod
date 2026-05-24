@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DatasitoryFileRepository extends JpaRepository<DatasitoryFile, Long> {
-    boolean existsByFileId(String fileId);
-
     List<DatasitoryFile> findAllByDatasitory(Datasitory datasitory);
     @Query(nativeQuery = true, name = "SELECT * FROM datasitory_files AS df " +
             "JOIN datasitory AS d ON d.id = df.datasitory_id " +
             "WHERE d.id = :datasitoryId AND df.fileType = :fileType")
     List<DatasitoryFile> findByDatasitoryIdAndFileType(@Param("datasitoryId") long datasitoryId,
                                                            @Param("fileType") FileType fileType);
+
+    Optional<DatasitoryFile> findByFileId(String fileId);
 }

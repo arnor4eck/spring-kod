@@ -3,6 +3,7 @@ package com.arnor4eck.springkod.controller;
 import com.arnor4eck.springkod.service.DatasitoryService;
 import com.arnor4eck.springkod.util.dto.datasitory.DatasitoryDto;
 import com.arnor4eck.springkod.util.dto.datasitory_member.DatasitoryMemberDto;
+import com.arnor4eck.springkod.util.exception.FileNotFoundInStorageException;
 import com.arnor4eck.springkod.util.request.AddMemberToDatasitoryRequest;
 import com.arnor4eck.springkod.util.request.datasitory.CreateDatasitoryRequest;
 import jakarta.validation.Valid;
@@ -16,8 +17,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import java.io.FileNotFoundException;
 
 @RestController
 @RequestMapping("/api/v1/datasitory")
@@ -70,7 +69,7 @@ public class DatasitoryController {
 
     @GetMapping("/export/{id}")
     @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
-    public ResponseEntity<@NonNull StreamingResponseBody> exportDatasitory(@PathVariable("id") long datasitoryId) throws FileNotFoundException {
+    public ResponseEntity<@NonNull StreamingResponseBody> exportDatasitory(@PathVariable("id") long datasitoryId) throws FileNotFoundInStorageException {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION,

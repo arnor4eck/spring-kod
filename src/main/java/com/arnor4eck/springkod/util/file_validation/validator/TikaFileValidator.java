@@ -8,14 +8,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class TikaFileValidator implements FileValidator{
 
-    private final FileValidation imageFilesValidation;
+    private final FileValidation imageFileValidator;
 
-    private final FileValidation markupFilesValidation;
+    private final FileValidation markupFileValidator;
 
-    public TikaFileValidator(@Qualifier("tikaImageFilesValidation") FileValidation imageFilesValidation,
-                             @Qualifier("tikaMarkupFilesValidation") FileValidation markupFilesValidation){
-        this.imageFilesValidation = imageFilesValidation;
-        this.markupFilesValidation = markupFilesValidation;
+    private final FileValidation metadataFileValidator;
+
+    private final FileValidation probabilityFileValidator;
+
+    public TikaFileValidator(@Qualifier("tikaImageFileValidator") FileValidation imageFileValidator,
+                             @Qualifier("tikaMarkupFileValidator") FileValidation markupFileValidator,
+                             @Qualifier("tikaMetadataFileValidator") FileValidation metadataFileValidator,
+                             @Qualifier("tikaProbabilityFileValidator") FileValidation probabilityFileValidator){
+        this.imageFileValidator = imageFileValidator;
+        this.markupFileValidator = markupFileValidator;
+        this.metadataFileValidator = metadataFileValidator;
+        this.probabilityFileValidator = probabilityFileValidator;
     }
 
     @Override
@@ -23,15 +31,25 @@ public class TikaFileValidator implements FileValidator{
         return switch (fileType){
             case IMAGE -> validateImage(bytes);
             case MARKUP_FILE -> validateMarkupFile(bytes);
+            case METADATA -> validateMetadataFile(bytes);
+            case PROBABILITY ->  validateProbabilityFile(bytes);
             default -> throw new IllegalArgumentException("Некорректный формат файла");
         };
     }
 
     private boolean validateImage(byte[] bytes){
-        return imageFilesValidation.validate(bytes);
+        return imageFileValidator.validate(bytes);
     }
 
     private boolean validateMarkupFile(byte[] bytes){
-        return markupFilesValidation.validate(bytes);
+        return markupFileValidator.validate(bytes);
+    }
+
+    private boolean validateProbabilityFile(byte[] bytes){
+        return probabilityFileValidator.validate(bytes);
+    }
+
+    private boolean validateMetadataFile(byte[] bytes){
+        return metadataFileValidator.validate(bytes);
     }
 }

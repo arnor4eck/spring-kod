@@ -27,6 +27,12 @@ public class DatabaseFileSaver implements FileSaver {
         DatasitoryFile datasitoryFile = createDatasitoryFile(saveClass, datasitory);
 
         DatasitoryFile df = datasitoryFileRepository.save(datasitoryFile);
+
+        if(saveClass.file().getFileType() == FileType.UNKNOWN_IMAGE){
+            log.warn("Изображение {} некорректно, оно не сохранено в хранилище", saveClass.file().getOriginalFilename());
+            return;
+        }
+
         contentSaver.save(saveClass);
         log.info("Файл {} сохранен в базу данных", df.getFileId());
 

@@ -2,8 +2,7 @@ package com.arnor4eck.springkod.service;
 
 import com.arnor4eck.springkod.config.rest_template.RestTemplateVariables;
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
-import com.arnor4eck.springkod.repository.DatasitoryFileRepository;
-import com.arnor4eck.springkod.repository.DatasitoryRepository;
+import com.arnor4eck.springkod.util.exception.FileNotFoundInStorageException;
 import com.arnor4eck.springkod.util.file.FileImpl;
 import com.arnor4eck.springkod.util.file.loader.FileLoader;
 import com.arnor4eck.springkod.util.response.MlAnaliticsResponse;
@@ -16,7 +15,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +30,7 @@ public class MlService {
 
     private final FileLoader fileLoader;
 
-    public MlAnaliticsResponse getMlAnalitics(long datasitoryId) throws IOException, FileNotFoundException {
+    public MlAnaliticsResponse getMlAnalitics(long datasitoryId) throws IOException, FileNotFoundInStorageException {
 
         List<FileImpl> allFiles = fileLoader.loadAll(datasitoryId);
 
@@ -44,11 +42,11 @@ public class MlService {
         return analitics(images, markupFile, probabilityFile, metadataFile);
     }
 
-    private FileImpl getMarkUpFile(List<FileImpl> allFiles) throws FileNotFoundException {
+    private FileImpl getMarkUpFile(List<FileImpl> allFiles) throws FileNotFoundInStorageException {
         FileImpl markUpFile = getSoloFileByType(allFiles, FileType.MARKUP_FILE);
 
         if(markUpFile == null){
-            throw new FileNotFoundException("Нет обязательного файла разметки");
+            throw new FileNotFoundInStorageException("Нет обязательного файла разметки");
         }
 
         return markUpFile;

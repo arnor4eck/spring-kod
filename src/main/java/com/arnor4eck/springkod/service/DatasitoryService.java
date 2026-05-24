@@ -6,6 +6,7 @@ import com.arnor4eck.springkod.entity.datasitory_member.DatasitoryMember;
 import com.arnor4eck.springkod.entity.user.User;
 import com.arnor4eck.springkod.repository.DatasitoryRepository;
 import com.arnor4eck.springkod.repository.UserRepository;
+import com.arnor4eck.springkod.util.exception.FileNotFoundInStorageException;
 import com.arnor4eck.springkod.util.request.AddMemberToDatasitoryRequest;
 import com.arnor4eck.springkod.util.request.datasitory.CreateDatasitoryRequest;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,7 +79,7 @@ public class DatasitoryService {
         return datasitoryRepository.findAllById(ids);
     }
 
-    public StreamingResponseBody export(long datasitoryId) throws FileNotFoundException {
+    public StreamingResponseBody export(long datasitoryId) throws FileNotFoundInStorageException {
         return exportService.export(datasitoryId);
     }
 

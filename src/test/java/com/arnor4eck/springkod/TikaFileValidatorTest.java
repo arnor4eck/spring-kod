@@ -24,7 +24,9 @@ public class TikaFileValidatorTest {
     void setUp() {
         imageFileValidation = mock(FileValidation.class);
         markupFileValidation = mock(FileValidation.class);
-        tikaFileValidator = new TikaFileValidator(imageFileValidation, markupFileValidation);
+        var metadataFileValidation = mock(FileValidation.class);
+        var probabilityFileValidation = mock(FileValidation.class);
+        tikaFileValidator = new TikaFileValidator(imageFileValidation, markupFileValidation, metadataFileValidation, probabilityFileValidation);
     }
 
     @Test

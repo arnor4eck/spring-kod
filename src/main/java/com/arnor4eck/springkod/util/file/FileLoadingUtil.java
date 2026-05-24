@@ -1,18 +1,18 @@
 package com.arnor4eck.springkod.util.file;
 
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
+import com.arnor4eck.springkod.util.exception.FileNotFoundInStorageException;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
 public class FileLoadingUtil {
 
-    public static FileImpl getMarkUpFile(List<FileImpl> allFiles) throws FileNotFoundException {
+    public static FileImpl getMarkUpFile(List<FileImpl> allFiles) throws FileNotFoundInStorageException {
         FileImpl markUpFile = getSoloFileByType(allFiles, FileType.MARKUP_FILE);
 
         if(markUpFile == null){
-            throw new FileNotFoundException("Нет обязательного файла разметки");
+            throw new FileNotFoundInStorageException("Нет обязательного файла разметки");
         }
 
         return markUpFile;
