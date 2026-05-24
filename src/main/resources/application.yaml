@@ -40,6 +40,9 @@ selectel.s3:
   region: ${AWS_REGION}
   bucket: ${AWS_BUCKET}
 
+ml:
+  url: ${ML_SERVICE_URL}
+
 cloudinary:
   cloud_name: ${CLOUDINARY_NAME}
   api_key: ${CLOUDINARY_API_KEY}
