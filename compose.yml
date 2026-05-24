@@ -50,7 +50,9 @@ services:
     command: java -jar app.jar
 
   ml_service:
-    build: ml_service/.
+    build:
+      context: ml-service/.
+      dockerfile: Dockerfile
     networks:
       - app-network
 
