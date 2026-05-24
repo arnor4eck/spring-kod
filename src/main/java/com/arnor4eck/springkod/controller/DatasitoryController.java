@@ -9,10 +9,15 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import java.io.FileNotFoundException;
 
 @RestController
 @RequestMapping("/api/v1/datasitory")
@@ -58,5 +63,14 @@ public class DatasitoryController {
         return ResponseEntity.ok(new DatasitoryMemberDto(
                 datasitoryService.addMember(id, request))
         );
+    }
+
+    @GetMapping("/export/{id}")
+    public ResponseEntity<@NonNull StreamingResponseBody> exportDatasitory(@PathVariable("id") long id) throws FileNotFoundException {
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=dataset_" + id + ".zip")
+                .body(datasitoryService.export(id));
     }
 }

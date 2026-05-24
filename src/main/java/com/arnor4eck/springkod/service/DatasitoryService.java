@@ -12,7 +12,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +27,8 @@ public class DatasitoryService {
     private final DatasitoryRepository datasitoryRepository;
 
     private final UserRepository userRepository;
+
+    private final ExportService exportService;
 
     public Datasitory createDatasitory(CreateDatasitoryRequest createDatasitoryRequest) {
         User creator = userRepository.findById(createDatasitoryRequest.creatorId()).get();
@@ -65,5 +69,9 @@ public class DatasitoryService {
             return Collections.emptyList();
         }
         return datasitoryRepository.findAllById(ids);
+    }
+
+    public StreamingResponseBody export(long datasitoryId) throws FileNotFoundException {
+        return exportService.export(datasitoryId);
     }
 }
