@@ -74,4 +74,8 @@ public class DatasitoryService {
     public StreamingResponseBody export(long datasitoryId) throws FileNotFoundException {
         return exportService.export(datasitoryId);
     }
+
+    public void delete(long datasitoryId) {
+        datasitoryRepository.deleteById(datasitoryId);
+    }
 }

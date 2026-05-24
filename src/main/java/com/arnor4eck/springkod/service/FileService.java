@@ -122,8 +122,6 @@ public class FileService {
                 break;
             default: throw new UnsupportedOperationException("Не поддерживается ");
         }
-
-        log.info("Сохранение {} файла {} для датазитория {}", fileType.name(), file.getOriginalFilename(), datasitoryId);
     }
 
     private void saveMetadata(MultipartFile file, long datasitoryId) {
@@ -131,6 +129,7 @@ public class FileService {
         fileImpl.setFileType(FileType.METADATA); // TODO ПЕРЕДЕЛАТЬ
 
         Datasitory datasitory = findDatasitoryById(datasitoryId);
+        log.info("Сохранение {} файла {} для датазитория {}", fileImpl.getFileType().name(), generateKey(fileImpl, datasitoryId), datasitoryId);
         fileSaver.save(new FileSaveClass(generateKey(fileImpl, datasitoryId), fileImpl), datasitory);
     }
 
@@ -142,6 +141,7 @@ public class FileService {
         FileImpl fileImpl = map(file);
 
         Datasitory datasitory = findDatasitoryById(datasitoryId);
+        log.info("Сохранение {} файла {} для датазитория {}", fileImpl.getFileType().name(), generateKey(fileImpl, datasitoryId), datasitoryId);
         fileSaver.save(new FileSaveClass(generateKey(fileImpl, datasitoryId), fileImpl), datasitory);
     }
 }
