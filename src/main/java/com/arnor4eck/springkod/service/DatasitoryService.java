@@ -10,6 +10,8 @@ import com.arnor4eck.springkod.util.request.AddMemberToDatasitoryRequest;
 import com.arnor4eck.springkod.util.request.datasitory.CreateDatasitoryRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -50,13 +52,19 @@ public class DatasitoryService {
     }
 
     public List<Datasitory> getAllDatasitoriesByUserEmail(String email) {
-        return datasitoryRepository.findAllByUserEmail(email); // TODO проверить, попадают ли даты, в которх пользователь как юзер
+        return datasitoryRepository.findAllByUserEmail(email);
     }
 
-    public List<Datasitory> getAllDatasitoriesByUserId(long userId) {
+    private List<Datasitory> getAllDatasitoriesByUserId(long userId) {
         String userEmail = userRepository.getEmailById(userId);
 
         return datasitoryRepository.findAllByUserEmail(userEmail);
+    }
+
+    public List<Datasitory> getAllDatasitoriesByUserIdExpectPrivate(long userId) {
+        return getAllDatasitoriesByUserId(userId).stream()
+                .filter(d -> d.getDatasitoryType() == DatasitoryType.OPEN)
+                .toList();
     }
 
     public DatasitoryMember addMember(long datasitoryId,
@@ -77,5 +85,40 @@ public class DatasitoryService {
 
     public void delete(long datasitoryId) {
         datasitoryRepository.deleteById(datasitoryId);
+    }
+
+    public boolean isOwner(Authentication auth, long datasitoryId) {
+        String userEmail = (String) auth.getPrincipal();
+        Datasitory datasitory = getById(datasitoryId);
+
+        if(isOwner(userEmail, datasitory))
+            return true;
+
+        throw new AccessDeniedException("У вас нет доступа для этого действия.");
+    }
+
+    private boolean isOwner(String email, Datasitory datasitory) {
+        return datasitory.getCreator().getEmail().equals(email);
+    }
+
+    public boolean hasAccess(Authentication auth, long datasitoryId) {
+        Datasitory datasitory = getById(datasitoryId);
+
+        if(datasitory.getDatasitoryType() == DatasitoryType.OPEN)
+            return true;
+
+        String userEmail = (String) auth.getPrincipal();
+
+        if(isOwner(userEmail, datasitory))
+            return true;
+
+        List<DatasitoryMember> members = datasitoryMembersService.findAllMembersExceptOwner(datasitory);
+
+        for(DatasitoryMember member : members){ // в будущем можно заменить одним запросом
+            if(member.getUser().getEmail().equals(userEmail))
+                return true;
+        }
+
+        throw new AccessDeniedException("У вас нет доступа к данному датазиторию.");
     }
 }

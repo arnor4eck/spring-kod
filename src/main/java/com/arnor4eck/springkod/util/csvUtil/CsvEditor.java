@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class csvEditor {
+public class CsvEditor {
 
     public static byte[] removeRowByFirstColumnValue(byte[] csvBytes, String valueToRemove) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -76,7 +76,6 @@ public class csvEditor {
                     .getParser()
                     .getHeaderNames();
             String firstColumnName = headers.get(0);
-            String secondColumnName = headers.get(1);
 
             // Записываем результат
             try (Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);

@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class DatasitoryMembersService {
@@ -47,5 +49,9 @@ public class DatasitoryMembersService {
 
     private User findUserByEmailOrThrow(String email){
         return (User) userDetailsService.loadUserByUsername(email);
+    }
+
+    public List<DatasitoryMember> findAllMembersExceptOwner(Datasitory datasitory){
+        return datasitoryMemberRepository.findAllByDatasitory(datasitory);
     }
 }

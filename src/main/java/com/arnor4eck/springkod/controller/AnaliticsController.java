@@ -1,10 +1,12 @@
 package com.arnor4eck.springkod.controller;
 
+import com.arnor4eck.springkod.service.DatasitoryService;
 import com.arnor4eck.springkod.service.MlService;
 import com.arnor4eck.springkod.util.response.MlAnaliticsResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +19,11 @@ public class AnaliticsController {
 
     private final MlService mlService;
 
-    @PostMapping("/{id}")
-    private MlAnaliticsResponse analize(@PathVariable("id") long id) throws IOException {
-        return mlService.getMlAnalitics(id);
+    private final DatasitoryService datasitoryService;
+
+    @GetMapping("/{id}")
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public MlAnaliticsResponse analize(@PathVariable("id") long datasitoryId) throws IOException {
+        return mlService.getMlAnalitics(datasitoryId);
     }
 }

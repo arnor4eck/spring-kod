@@ -43,7 +43,7 @@ public class ControllerAdvice {
                 request.getRequestURI(),
                 request.getMethod(),
                 request.getQueryString(),
-                headers.toString());
+                headers);
 
         return exceptionResponseFactory.create("Неизвестная ошибка сервера. Свяжитесь с разработчиком.",
                 response,
@@ -53,12 +53,12 @@ public class ControllerAdvice {
     @ExceptionHandler({AccessDeniedException.class})
     public ExceptionResponse handleAccessDeniedException(AccessDeniedException e,
                                                          HttpServletResponse response) {
-        return exceptionResponseFactory.create("Доступ к ресурсу ограничен.",
+        return exceptionResponseFactory.create(e.getMessage(),
                 response, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({AuthenticationException.class})
-    public ExceptionResponse handleAuthenticationException(AccessDeniedException e,
+    public ExceptionResponse handleAuthenticationException(AuthenticationException e,
                                                            HttpServletResponse response) {
         return exceptionResponseFactory.create("Авторизируйтесь для доступа к ресурсу.",
                 response, HttpStatus.UNAUTHORIZED);

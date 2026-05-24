@@ -6,13 +6,13 @@ import com.arnor4eck.springkod.util.dto.datasitory_member.DatasitoryMemberDto;
 import com.arnor4eck.springkod.util.request.AddMemberToDatasitoryRequest;
 import com.arnor4eck.springkod.util.request.datasitory.CreateDatasitoryRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -33,50 +33,55 @@ public class DatasitoryController {
                         datasitoryService.createDatasitory(createDatasitoryRequest)));
     }
 
-    @GetMapping("/{id}") // TODO проверка на то что создатель или в мемберах
-    public ResponseEntity<@NonNull DatasitoryDto> getDatasitoryById(@PathVariable long id) {
+    @GetMapping("/{id}")
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull DatasitoryDto> getDatasitoryById(@PathVariable("id") long datasitoryId) {
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(new DatasitoryDto(
-                        datasitoryService.getById(id)));
+                        datasitoryService.getById(datasitoryId)));
     }
 
     @GetMapping("/my")
     public ResponseEntity<@NonNull Iterable<DatasitoryDto>> getAllUserDatasitory(@AuthenticationPrincipal String email) {
-        return ResponseEntity.accepted().body(datasitoryService.getAllDatasitoriesByUserEmail(email)
+        return ResponseEntity.accepted()
+                .body(datasitoryService.getAllDatasitoriesByUserEmail(email)
                 .stream()
                 .map(DatasitoryDto::new)
                 .toList());
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<@NonNull Iterable<DatasitoryDto>> getAllUserDatasitory(@PathVariable long id) {
+    public ResponseEntity<@NonNull Iterable<DatasitoryDto>> getAllUserDatasitories(@PathVariable("id") long userId) {
         return ResponseEntity.accepted()
-                .body(datasitoryService.getAllDatasitoriesByUserId(id)
+                .body(datasitoryService.getAllDatasitoriesByUserIdExpectPrivate(userId)
                     .stream()
                     .map(DatasitoryDto::new)
                     .toList());
     }
 
-    @PostMapping("/{id}/members") // TODO проверка что добавляет владелец
-    public ResponseEntity<@NonNull DatasitoryMemberDto> addMember(@PathVariable long id,
+    @PostMapping("/{id}/members")
+    @PreAuthorize("@datasitoryService.isOwner(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull DatasitoryMemberDto> addMember(@PathVariable("id") long datasitoryId,
                                                                   @RequestBody @Valid AddMemberToDatasitoryRequest request){
         return ResponseEntity.ok(new DatasitoryMemberDto(
-                datasitoryService.addMember(id, request))
+                datasitoryService.addMember(datasitoryId, request))
         );
     }
 
     @GetMapping("/export/{id}")
-    public ResponseEntity<@NonNull StreamingResponseBody> exportDatasitory(@PathVariable("id") long id) throws FileNotFoundException {
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull StreamingResponseBody> exportDatasitory(@PathVariable("id") long datasitoryId) throws FileNotFoundException {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=dataset_" + id + ".zip")
-                .body(datasitoryService.export(id));
+                        "attachment; filename=dataset_" + datasitoryId + ".zip")
+                .body(datasitoryService.export(datasitoryId));
     }
 
-    @DeleteMapping("/{id}") // TODO проверка что удаляет владелец
-    public ResponseEntity<@NonNull Void> deleteDatasitoryById(@PathVariable("id") long id) {
-        datasitoryService.delete(id);
+    @DeleteMapping("/{id}")
+    @PreAuthorize("@datasitoryService.isOwner(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull Void> deleteDatasitoryById(@PathVariable("id") long datasitoryId) {
+        datasitoryService.delete(datasitoryId);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }

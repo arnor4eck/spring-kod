@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class DatabaseFileLoader implements FileLoader {
         if(files.isEmpty())
             throw new FileNotFoundException("Файла датазитория %d типа %s не существует.".formatted(datasitoryId, fileType.name()));
         if(files.size() != 1)
-            throw new RuntimeException("Файл не один"); // TODO customize
+            throw new FileNotFoundException("Файл не один");
 
         log.info("Файл {} для датазитория {} найден в базе данных", fileType.name(), datasitoryId);
 

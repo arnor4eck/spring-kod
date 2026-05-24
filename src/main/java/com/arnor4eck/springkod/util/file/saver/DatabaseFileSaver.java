@@ -51,19 +51,10 @@ public class DatabaseFileSaver implements FileSaver {
 
     @Override
     public void saveAll(List<FileSaveClass> saveClasses, Datasitory datasitory) {
-        /*datasitoryFileRepository.saveAll(
-            saveClasses.stream()
-                    .map(sc -> createDatasitoryFile(sc, datasitory))
-                    .toList()
-        );*/
-
-        // TODO REFACTOR
         saveClasses.forEach(saveClass -> this.save(saveClass, datasitory));
 
         contentSaver.saveAll(saveClasses);
     }
-
-    private record Temp(String url, DatasitoryFile datasitoryFile) {}
 
     private DatasitoryFile createDatasitoryFile(FileSaveClass saveClass,
                                                 Datasitory datasitory) {

@@ -37,7 +37,7 @@ public class FileService {
     private final ImageUrlRepository imageUrlRepository;
 
     public void saveImages(List<MultipartFile> files, long datasitoryId){
-        // TODO проверка на битые файлы ОНИ СОХРАНЯЮТСЯ В БД НА УРОВНЕ ENUM ???
+        // TODO проверка на битые файлы ОНИ СОХРАНЯЮТСЯ В БД НА УРОВНЕ ENUM ??? <- да, добавить отдельный enum
         log.info("Сохранение {} фото для датазитория {}", files.size(), datasitoryId);
 
         List<FileImpl> mapped = mapAllFiles(files);
@@ -126,7 +126,7 @@ public class FileService {
 
     private void saveMetadata(MultipartFile file, long datasitoryId) {
         FileImpl fileImpl = map(file);
-        fileImpl.setFileType(FileType.METADATA); // TODO ПЕРЕДЕЛАТЬ
+        fileImpl.setFileType(FileType.METADATA);
 
         Datasitory datasitory = findDatasitoryById(datasitoryId);
         log.info("Сохранение {} файла {} для датазитория {}", fileImpl.getFileType().name(), generateKey(fileImpl, datasitoryId), datasitoryId);

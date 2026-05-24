@@ -1,6 +1,7 @@
 package com.arnor4eck.springkod.controller;
 
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
+import com.arnor4eck.springkod.service.DatasitoryService;
 import com.arnor4eck.springkod.service.FileService;
 import com.arnor4eck.springkod.util.dto.file.FileUrlDto;
 import com.arnor4eck.springkod.util.file.FileImpl;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,17 +27,21 @@ public class FileController {
 
     private final FileService fileService;
 
+    private final DatasitoryService datasitoryService;
+
     @PostMapping("/images/{id}")
-    public ResponseEntity<@NonNull Void> saveImages(@PathVariable("id") long id,
+    @PreAuthorize("@datasitoryService.isOwner(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull Void> saveImages(@PathVariable("id") long datasitoryId,
                                                    @RequestParam("files") List<MultipartFile> files) {
-        fileService.saveImages(files, id);
+        fileService.saveImages(files, datasitoryId);
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/images/{id}")
-    public ResponseEntity<@NonNull List<FileUrlDto>> getImages(@PathVariable("id") long id) {
-        return ResponseEntity.ok(fileService.loadImages(id)
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull List<FileUrlDto>> getImages(@PathVariable("id") long datasitoryId) {
+        return ResponseEntity.ok(fileService.loadImages(datasitoryId)
                 .stream()
                 .map(FileUrlDto::new)
                 .toList());
@@ -53,43 +59,51 @@ public class FileController {
     }
 
     @PostMapping("/probability/{id}")
-    public ResponseEntity<@NonNull Void> saveProbability(@PathVariable("id") long id,
-                                                    @RequestParam("file") MultipartFile file) {
-        fileService.saveFile(file, id, FileType.PROBABILITY);
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull Void> saveProbability(@PathVariable("id") long datasitoryId,
+                                                        @RequestParam("file") MultipartFile file) {
+        fileService.saveFile(file, datasitoryId, FileType.PROBABILITY);
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/probability/{id}")
-    public ResponseEntity<@NonNull Resource> getProbability(@PathVariable("id") long id) throws IOException {
-        return inlineFile(fileService.loadFile(id, FileType.PROBABILITY));
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull Resource> getProbability(@PathVariable("id") long datasitoryId) throws IOException {
+        return inlineFile(fileService.loadFile(datasitoryId, FileType.PROBABILITY));
     }
 
     @PostMapping("/metadata/{id}")
-    public ResponseEntity<@NonNull Void> saveMetadata(@PathVariable("id") long id,
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull Void> saveMetadata(@PathVariable("id") long datasitoryId,
                                                     @RequestParam("file") MultipartFile file) {
-        fileService.saveFile(file, id, FileType.METADATA);
+        fileService.saveFile(file, datasitoryId, FileType.METADATA);
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/metadata/{id}")
-    public ResponseEntity<@NonNull Resource> getMetadata(@PathVariable("id") long id) throws IOException {
-        return inlineFile(fileService.loadFile(id, FileType.METADATA));
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull Resource> getMetadata(@PathVariable("id") long datasitoryId) throws IOException {
+        return inlineFile(fileService.loadFile(datasitoryId, FileType.METADATA));
     }
 
     @PostMapping("/markup/{id}")
-    public ResponseEntity<@NonNull Void> saveMarkup(@PathVariable("id") long id,
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull Void> saveMarkup(@PathVariable("id") long datasitoryId,
                                                       @RequestParam("file") MultipartFile file) {
-        fileService.saveFile(file, id, FileType.MARKUP_FILE);
+        fileService.saveFile(file, datasitoryId, FileType.MARKUP_FILE);
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/markup/{id}")
-    public ResponseEntity<@NonNull Resource> getMarkup(@PathVariable("id") long id) throws IOException {
-        return inlineFile(fileService.loadFile(id, FileType.MARKUP_FILE));
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull Resource> getMarkup(@PathVariable("id") long datasitoryId) throws IOException {
+        return inlineFile(fileService.loadFile(datasitoryId, FileType.MARKUP_FILE));
     }
+
+    // TODO проработать, что на POST запрос нужно именно право загрузки
 
     private ResponseEntity<@NonNull Resource> inlineFile(FileImpl file) throws IOException {
         return ResponseEntity.status(HttpStatus.ACCEPTED)
