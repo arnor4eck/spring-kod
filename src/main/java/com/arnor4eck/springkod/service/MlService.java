@@ -5,7 +5,7 @@ import com.arnor4eck.springkod.entity.datasitory_file.FileType;
 import com.arnor4eck.springkod.util.exception.FileNotFoundInStorageException;
 import com.arnor4eck.springkod.util.file.FileImpl;
 import com.arnor4eck.springkod.util.file.loader.FileLoader;
-import com.arnor4eck.springkod.util.response.MlAnaliticsResponse;
+import com.arnor4eck.springkod.util.response.ml.MlAnalyticsResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
@@ -30,7 +30,7 @@ public class MlService {
 
     private final FileLoader fileLoader;
 
-    public MlAnaliticsResponse getMlAnalitics(long datasitoryId) throws IOException, FileNotFoundInStorageException {
+    public MlAnalyticsResponse getMlAnalitics(long datasitoryId) throws IOException, FileNotFoundInStorageException {
 
         List<FileImpl> allFiles = fileLoader.loadAll(datasitoryId);
 
@@ -75,7 +75,7 @@ public class MlService {
         return null;
     }
 
-    private MlAnaliticsResponse analitics(List<FileImpl> images,
+    private MlAnalyticsResponse analitics(List<FileImpl> images,
                                          FileImpl markupFile,
                                          Optional<FileImpl> probability,
                                          Optional<FileImpl> metadata) throws IOException {
@@ -97,15 +97,12 @@ public class MlService {
         HttpEntity<MultiValueMap<String, Object>> requestEntity =
                 new HttpEntity<>(body, headers);
 
-        ResponseEntity<MlAnaliticsResponse> response = restTemplate.exchange(
+        ResponseEntity<MlAnalyticsResponse> response = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
                 requestEntity,
-                MlAnaliticsResponse.class
+                MlAnalyticsResponse.class
         );
-
-        log.info("Запрос аналитики получен: {} files, {} images",
-                response.getBody().count(), response.getBody().imagesCount());
 
         return response.getBody();
     }
