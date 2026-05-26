@@ -13,6 +13,7 @@ import com.arnor4eck.springkod.util.file.saver.FileSaveClass;
 import com.arnor4eck.springkod.util.file.saver.FileSaver;
 import com.arnor4eck.springkod.util.file.spring.FileSpringLoader;
 import com.arnor4eck.springkod.util.file_validation.validator.TikaFileValidator;
+import com.arnor4eck.springkod.util.key.KeyGenerator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,8 @@ public class FileService {
 
     private final TikaFileValidator tikaFileValidator;
 
+    private final KeyGenerator keyGenerator;
+
     public void saveImages(List<MultipartFile> files, long datasitoryId){
         // TODO проверка на битые файлы ОНИ СОХРАНЯЮТСЯ В БД НА УРОВНЕ ENUM ??? <- да, добавить отдельный enum
         log.info("Сохранение {} фото для датазитория {}", files.size(), datasitoryId);
@@ -46,7 +49,7 @@ public class FileService {
         List<FileImpl> mapped = mapAllImages(files);
         List<FileSaveClass> saveClasses = mapped.stream()
                                 .map(fi ->
-                                    new FileSaveClass(generateKey(fi, datasitoryId), fi))
+                                    new FileSaveClass(keyGenerator.generateKey(fi.getOriginalFilename(), datasitoryId), fi))
                                 .toList();
         Datasitory datasitory = findDatasitoryById(datasitoryId);
 
@@ -79,10 +82,6 @@ public class FileService {
         }catch (IOException e){
             throw new IllegalArgumentException(e.getMessage(), e);
         }
-    }
-
-    private String generateKey(FileImpl file, long datasitoryId){
-        return String.format("%d-%s", datasitoryId, file.getOriginalFilename());
     }
 
     public List<ImageUrl> loadImages(long datasitoryId) {
@@ -139,8 +138,8 @@ public class FileService {
         fileImpl.setFileType(FileType.METADATA);
 
         Datasitory datasitory = findDatasitoryById(datasitoryId);
-        log.info("Сохранение {} файла {} для датазитория {}", fileImpl.getFileType().name(), generateKey(fileImpl, datasitoryId), datasitoryId);
-        fileSaver.save(new FileSaveClass(generateKey(fileImpl, datasitoryId), fileImpl), datasitory);
+        log.info("Сохранение {} файла {} для датазитория {}", fileImpl.getFileType().name(), keyGenerator.generateKey(fileImpl.getOriginalFilename(), datasitoryId), datasitoryId);
+        fileSaver.save(new FileSaveClass(keyGenerator.generateKey(fileImpl.getOriginalFilename(), datasitoryId), fileImpl), datasitory);
     }
 
     private void saveMarkup(MultipartFile file, long datasitoryId) {
@@ -151,7 +150,7 @@ public class FileService {
         FileImpl fileImpl = map(file);
 
         Datasitory datasitory = findDatasitoryById(datasitoryId);
-        log.info("Сохранение {} файла {} для датазитория {}", fileImpl.getFileType().name(), generateKey(fileImpl, datasitoryId), datasitoryId);
-        fileSaver.save(new FileSaveClass(generateKey(fileImpl, datasitoryId), fileImpl), datasitory);
+        log.info("Сохранение {} файла {} для датазитория {}", fileImpl.getFileType().name(), keyGenerator.generateKey(fileImpl.getOriginalFilename(), datasitoryId), datasitoryId);
+        fileSaver.save(new FileSaveClass(keyGenerator.generateKey(fileImpl.getOriginalFilename(), datasitoryId), fileImpl), datasitory);
     }
 }

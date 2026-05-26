@@ -2,10 +2,12 @@ package com.arnor4eck.springkod.service;
 
 import com.arnor4eck.springkod.config.rest_template.RestTemplateVariables;
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
+import com.arnor4eck.springkod.util.ResponseTransformer;
 import com.arnor4eck.springkod.util.exception.FileNotFoundInStorageException;
 import com.arnor4eck.springkod.util.file.FileImpl;
 import com.arnor4eck.springkod.util.file.loader.FileLoader;
 import com.arnor4eck.springkod.util.response.ml.MlAnalyticsResponse;
+import com.arnor4eck.springkod.util.response.ml.to_frontend.MlAnalyticsResponseWithUrls;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
@@ -30,7 +32,9 @@ public class MlService {
 
     private final FileLoader fileLoader;
 
-    public MlAnalyticsResponse getMlAnalitics(long datasitoryId) throws IOException, FileNotFoundInStorageException {
+    private final ResponseTransformer responseTransformer;
+
+    public MlAnalyticsResponseWithUrls getMlAnalitics(long datasitoryId) throws IOException, FileNotFoundInStorageException {
 
         List<FileImpl> allFiles = fileLoader.loadAll(datasitoryId);
 
@@ -39,7 +43,7 @@ public class MlService {
         Optional<FileImpl> probabilityFile = getProbabilityFile(allFiles);
         Optional<FileImpl> metadataFile = getMetadataFile(allFiles);
 
-        return analitics(images, markupFile, probabilityFile, metadataFile);
+        return responseTransformer.transformToFrontendResponse(datasitoryId, analitics(images, markupFile, probabilityFile, metadataFile));
     }
 
     private FileImpl getMarkUpFile(List<FileImpl> allFiles) throws FileNotFoundInStorageException {

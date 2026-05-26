@@ -3,6 +3,7 @@ package com.arnor4eck.springkod.controller;
 import com.arnor4eck.springkod.service.DatasitoryService;
 import com.arnor4eck.springkod.service.MlService;
 import com.arnor4eck.springkod.util.response.ml.MlAnalyticsResponse;
+import com.arnor4eck.springkod.util.response.ml.to_frontend.MlAnalyticsResponseWithUrls;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ public class AnaliticsController {
 
     @GetMapping("/{id}")
     @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
-    public MlAnalyticsResponse analize(@PathVariable("id") long datasitoryId) throws IOException {
+    public MlAnalyticsResponseWithUrls analize(@PathVariable("id") long datasitoryId) throws IOException {
         return mlService.getMlAnalitics(datasitoryId);
     }
 }

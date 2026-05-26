@@ -12,4 +12,9 @@ public interface ImageUrlRepository extends JpaRepository<ImageUrl, Long> {
             "JOIN DATASITORY_FILES AS df ON df.id = iu.datasitory_file_id " +
             "WHERE df.datasitory_id = :datasitory_id", nativeQuery = true)
     List<ImageUrl> findAllByDatasitoryId(@Param("datasitory_id") long datasitoryId);
+
+    @Query(nativeQuery = true, value = "SELECT iu.* FROM image_url AS iu " +
+            "JOIN DATASITORY_FILES AS df ON df.id = iu.datasitory_file_id " +
+            "WHERE df.file_id = :datasitory_file_file_id")
+    ImageUrl findByDatasitoryFileFileId(@Param("datasitory_file_file_id")String datasitoryFilefileId);
 }
