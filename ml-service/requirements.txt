@@ -2,19 +2,3 @@ fastapi
 uvicorn
 python-multipart
 aiofiles
-# ML-фреймворк
-torch>=2.0.0
-torchvision>=0.15.0
-# Data-centric AI
-cleanlab[datalab]>=2.5.0
-# Численные вычисления
-numpy>=1.24.0
-scipy>=1.10.0
-# Классический ML
-scikit-learn>=1.3.0
-# Работа с данными
-pandas>=2.0.0
-# Изображения
-Pillow>=10.0.0
-# Прогресс-бары
-tqdm>=4.65.0

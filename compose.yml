@@ -52,12 +52,6 @@ services:
     command: java -jar app.jar
 
   ml_service:
-    deploy:
-      resources:
-        limits:
-          memory: 8G
-        reservations:
-          memory: 2G
     build:
       context: ml-service/.
       dockerfile: Dockerfile

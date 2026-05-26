@@ -4,10 +4,6 @@ import logging
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-from src.pipeline import run_full_pipeline
-
 """
 python -m venv venv
 venv/Scripts/activate
@@ -25,4 +21,4 @@ async def upload_multiple_files(
     probability: Optional[UploadFile] = File(None),  # опционально
     metadata: Optional[UploadFile] = File(None)      # опционально
 ):
-    return await run_full_pipeline(images, markup_file, probability)
+    return "Привет!"
