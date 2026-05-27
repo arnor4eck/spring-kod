@@ -10,4 +10,5 @@ import java.util.List;
 public interface FileSaver {
     void save(FileSaveClass saveClass, Datasitory datasitory);
     void saveAll(List<FileSaveClass> saveClass, Datasitory datasitory);
+    void updateOnlyContent(FileSaveClass saveClass);
 }
