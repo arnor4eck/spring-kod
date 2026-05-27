@@ -23,7 +23,7 @@ public class DatabaseFileLoader implements FileLoader {
 
     private final DatasitoryFileRepository datasitoryFileRepository;
 
-    private final DatasitoryRepository datasitoryRepository; // TODO change query
+    private final DatasitoryRepository datasitoryRepository;
 
     @Override
     public FileImpl load(String key) throws FileNotFoundInStorageException {

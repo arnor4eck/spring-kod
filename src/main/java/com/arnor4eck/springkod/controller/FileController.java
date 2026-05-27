@@ -52,7 +52,7 @@ public class FileController {
         FileImpl file = fileService.loadFile(name);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED)
-                .contentType(MediaType.parseMediaType(file.getContentType())) // TODO
+                .contentType(MediaType.parseMediaType(file.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + file.getOriginalFilename() + "\"")
                 .body(new ByteArrayResource(file.getBytes()));
@@ -102,8 +102,6 @@ public class FileController {
     public ResponseEntity<@NonNull Resource> getMarkup(@PathVariable("id") long datasitoryId) throws IOException {
         return inlineFile(fileService.loadFile(datasitoryId, FileType.MARKUP_FILE));
     }
-
-    // TODO проработать, что на POST запрос нужно именно право загрузки
 
     private ResponseEntity<@NonNull Resource> inlineFile(FileImpl file) throws IOException {
         return ResponseEntity.status(HttpStatus.ACCEPTED)

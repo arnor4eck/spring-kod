@@ -43,7 +43,6 @@ public class FileService {
     private final KeyGenerator keyGenerator;
 
     public void saveImages(List<MultipartFile> files, long datasitoryId){
-        // TODO проверка на битые файлы ОНИ СОХРАНЯЮТСЯ В БД НА УРОВНЕ ENUM ??? <- да, добавить отдельный enum
         log.info("Сохранение {} фото для датазитория {}", files.size(), datasitoryId);
 
         List<FileImpl> mapped = mapAllImages(files);

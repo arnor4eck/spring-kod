@@ -32,32 +32,28 @@ public class CsvService {
     private final DatasitoryFileRepository datasitoryFileRepository;
 
     public void deleteMarkupLineByValueInFirstColumn(long datasitoryId, DeleteMarkupLineRequest request) throws IOException {
-        List<String> ids = new LinkedList<>();
 
-        for(FileToDelete fileToDelete : request.filesToDelete()) {
-            FileImpl file = fileLoader.load(datasitoryId, FileType.MARKUP_FILE);
+        FileImpl file = fileLoader.load(datasitoryId, FileType.MARKUP_FILE);
 
-            byte[] newFileContent = CsvEditor.removeRowByFirstColumnValue(file.getBytes(), fileToDelete.fileName());
-            file.setContent(newFileContent);
+        byte[] newFileContent = CsvEditor.removeRowByFirstColumnValue(file.getBytes(), request.filesToDelete().stream().map(FileToDelete::fileName).toList());
+        file.setContent(newFileContent);
 
-            saveUpdatedFile(datasitoryId, file);
-            ids.add(keyGenerator.generateKey(fileToDelete.fileName(), datasitoryId));
-        }
+        saveUpdatedFile(datasitoryId, file);
+        List<String> ids = request.filesToDelete().stream()
+                .map( f -> keyGenerator.generateKey(f.fileName(), datasitoryId))
+                .toList();
 
         datasitoryFileRepository.deleteAllByFileIds(ids);
     }
 
     public void updateSecondColumnByFirstColumnValue(long datasitoryId, UpdateMarkupLineRequest request) throws IOException {
-        for(FileToUpdate fileToUpdate : request.filesToUpdate()) {
-            FileImpl file = fileLoader.load(datasitoryId, FileType.MARKUP_FILE);
+        FileImpl file = fileLoader.load(datasitoryId, FileType.MARKUP_FILE);
 
-            byte[] newFileContent = CsvEditor.updateSecondColumnByFirstColumnValue(
-                    file.getBytes(), fileToUpdate.fileName(), fileToUpdate.newLabel()
-            );
-            file.setContent(newFileContent);
+        byte[] newFileContent = CsvEditor.updateSecondColumnByFirstColumnValue(
+                file.getBytes(), request.filesToUpdate());
+        file.setContent(newFileContent);
 
-            saveUpdatedFile(datasitoryId, file);
-        }
+        saveUpdatedFile(datasitoryId, file);
     }
 
     private void saveUpdatedFile(long datasitoryId, FileImpl file) {

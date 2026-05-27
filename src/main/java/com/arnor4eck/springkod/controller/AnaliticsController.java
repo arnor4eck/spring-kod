@@ -1,8 +1,6 @@
 package com.arnor4eck.springkod.controller;
 
-import com.arnor4eck.springkod.service.DatasitoryService;
 import com.arnor4eck.springkod.service.MlService;
-import com.arnor4eck.springkod.util.response.ml.MlAnalyticsResponse;
 import com.arnor4eck.springkod.util.response.ml.to_frontend.MlAnalyticsResponseWithUrls;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,8 +17,6 @@ import java.io.IOException;
 public class AnaliticsController {
 
     private final MlService mlService;
-
-    private final DatasitoryService datasitoryService;
 
     @GetMapping("/{id}")
     @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
