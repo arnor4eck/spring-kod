@@ -6,7 +6,10 @@ import com.arnor4eck.springkod.util.ResponseTransformer;
 import com.arnor4eck.springkod.util.exception.FileNotFoundInStorageException;
 import com.arnor4eck.springkod.util.file.FileImpl;
 import com.arnor4eck.springkod.util.file.loader.FileLoader;
+import com.arnor4eck.springkod.util.response.ml.ClassInfo;
 import com.arnor4eck.springkod.util.response.ml.MlAnalyticsResponse;
+import com.arnor4eck.springkod.util.response.ml.Summary;
+import com.arnor4eck.springkod.util.response.ml.to_frontend.GroupsWithUrls;
 import com.arnor4eck.springkod.util.response.ml.to_frontend.MlAnalyticsResponseWithUrls;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +47,9 @@ public class MlService {
         Optional<FileImpl> probabilityFile = getProbabilityFile(allFiles);
         Optional<FileImpl> metadataFile = getMetadataFile(allFiles);
 
-        return responseTransformer.transformToFrontendResponse(datasitoryId, analitics(images, markupFile, probabilityFile, metadataFile));
+        //return responseTransformer.transformToFrontendResponse(datasitoryId, analitics(images, markupFile, probabilityFile, metadataFile));
+        return new MlAnalyticsResponseWithUrls(new Summary(1, 2, 3, List.of(new ClassInfo(1, "fds", 1, 23.0, 12.2))),
+                new GroupsWithUrls(List.of(),List.of(),List.of(),List.of(),List.of()), new LinkedList<>());
     }
 
     private FileImpl getMarkUpFile(List<FileImpl> allFiles) throws FileNotFoundInStorageException {
