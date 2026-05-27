@@ -14,7 +14,7 @@ public final class FileImpl implements MultipartFile {
     private final String originalName;
     private final String contentType;
     private FileType fileType;
-    private final byte[] content;
+    private byte[] content;
 
     public FileImpl(String name, String originalName,
                     String contentType, FileType fileType, byte[] content) {
@@ -42,6 +42,10 @@ public final class FileImpl implements MultipartFile {
 
     public void setFileType(FileType fileType) {
         this.fileType = fileType;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
     }
 
     @Override

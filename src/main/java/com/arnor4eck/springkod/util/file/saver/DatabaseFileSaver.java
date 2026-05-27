@@ -54,6 +54,11 @@ public class DatabaseFileSaver implements FileSaver {
         contentSaver.saveAll(saveClasses);
     }
 
+    @Override
+    public void updateOnlyContent(FileSaveClass saveClass) {
+        contentSaver.save(saveClass);
+    }
+
     private DatasitoryFile createDatasitoryFile(FileSaveClass saveClass,
                                                 Datasitory datasitory) {
         return DatasitoryFile.builder()
