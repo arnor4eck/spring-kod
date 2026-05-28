@@ -55,6 +55,9 @@ docker-compose down
 
 ### 2. Ручной запуск (Не рекомендуется, только если Docker не подгружает зависимости)
 ```bash
+# настроить .env файл
+cp .env.example .env
+
 # backend
 ./gradlew bootRunDev
 
