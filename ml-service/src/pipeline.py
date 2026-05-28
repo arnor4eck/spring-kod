@@ -33,15 +33,24 @@ async def run_full_pipeline(
     temperature: Optional[float] = None,
 ) -> Dict[str, Any]:
     """Запускает полный анализ датасета."""
+    """Запускает полный анализ датасета."""
     from .load_data import load_dataset
     from .baseline_model import get_model, get_transforms, get_embeddings, get_pred_probs
-    from .metrics import compute_entropy, compute_confidence, compute_deficit_per_object, compute_imbalance_index
-    from .analyze import compute_label_issues, compute_outliers, compute_near_duplicates
+    from .metrics import (
+        compute_entropy, compute_confidence, compute_deficit_per_object,
+        compute_imbalance_index, compute_balance_coefficient  # ✅ добавить
+    )
+    from .analyze import (
+        compute_label_issues, compute_outliers, compute_near_duplicates,
+        compute_label_issues_combined,      # ✅ добавить
+        compute_duplicates_combined         # ✅ добавить
+    )
     from .tags import compute_tags, _select_primary_from_duplicate_group
     from .utility import compute_utility_scores
     from .groups import split_into_groups
     from .roadmap import generate_roadmap
     from .summary import generate_summary
+    from .analyze import separate_outlier_novelty
 
     print("Загрузка данных...")
     dataset, targets, class_names = await load_dataset(images, markup_file, image_col, label_col)
@@ -53,7 +62,6 @@ async def run_full_pipeline(
     embeddings = get_embeddings(model, dataset, transforms)
 
     if pred_probs_file is not None:
-            # ⬇️ ТОЛЬКО JSON ⬇️
             print(f"Загрузка пользовательских вероятностей из JSON: {pred_probs_file.filename}")
 
             # Проверяем расширение
@@ -90,15 +98,24 @@ async def run_full_pipeline(
     confidence = compute_confidence(pred_probs)
     deficit_per_obj = compute_deficit_per_object(targets, n_classes)
     imbalance_index = compute_imbalance_index(targets, n_classes)
+    balance_coeff = compute_balance_coefficient(targets, n_classes)
 
-    print("[3/6] Cleanlab-анализ...")
+    print("[3/6] Cleanlab + JSD анализ...")
     label_results = compute_label_issues(pred_probs, targets)
     outlier_results = compute_outliers(embeddings)
-    dup_results = compute_near_duplicates(embeddings)
+    dup_results_raw = compute_near_duplicates(embeddings)
 
-    print("[4/6] Обработка дубликатов и полезность...")
+    combined_label = compute_label_issues_combined(
+        pred_probs=pred_probs, targets=targets, n_classes=n_classes,
+        label_scores=label_results["label_scores"],
+    )
+    outlier_sep = separate_outlier_novelty(outlier_results["outlier_scores"], entropy)
+    dup_results = compute_duplicates_combined(embeddings, pred_probs, dup_results_raw)
+
+    print("[4/6] Дубликаты и полезность...")
     primary_indices = set()
-    for group in dup_results.get("near_duplicate_sets", []):
+    near_dup_sets = dup_results.get("near_duplicate_sets", []) or []
+    for group in near_dup_sets:
         if len(group) > 0:
             primary = _select_primary_from_duplicate_group(
                 group, label_results["label_scores"], outlier_results["outlier_scores"], confidence
@@ -114,6 +131,9 @@ async def run_full_pipeline(
         entropy=entropy, outlier_scores=outlier_results["outlier_scores"],
         deficit_per_obj=deficit_per_obj, label_scores=label_results["label_scores"],
         is_duplicate=is_duplicate_flagged,
+        js_label_scores=combined_label["js_label_scores"],
+        is_outlier_flag=outlier_sep["is_outlier"],
+        is_novelty_flag=outlier_sep["is_novelty"],
     )
 
     print("[5/6] Теги и группы...")
@@ -121,23 +141,26 @@ async def run_full_pipeline(
         label_scores=label_results["label_scores"], entropy=entropy,
         confidence=confidence, outlier_scores=outlier_results["outlier_scores"],
         is_duplicate=dup_results["is_duplicate"], deficit_per_obj=deficit_per_obj,
-        near_duplicate_sets=dup_results.get("near_duplicate_sets", []),
+        near_duplicate_sets=near_dup_sets,
+        js_label_scores=combined_label["js_label_scores"],
+        is_outlier_flag=outlier_sep["is_outlier"],
+        is_novelty_flag=outlier_sep["is_novelty"],
     )
 
-    label_issue_indices = []
-    for i in range(n_total):
-        has_tag = "label_error" in tags[i] or "label_suspicious" in tags[i]
-        if has_tag and label_results["suggested_labels"][i] != targets[i]:
-            label_issue_indices.append(i)
+    label_issue_indices = [
+        i for i in range(n_total)
+        if ("label_error" in tags[i] or "label_suspicious" in tags[i])
+           and label_results["suggested_labels"][i] != targets[i]
+    ]
 
     groups = split_into_groups(
         tags=tags, utility_scores=utility_scores, label_scores=label_results["label_scores"],
         entropy=entropy, confidence=confidence, outlier_scores=outlier_results["outlier_scores"],
         targets=targets, suggested_labels=label_results["suggested_labels"],
         predicted_labels=label_results["predicted_labels"],
-        near_duplicate_sets=dup_results.get("near_duplicate_sets", []),
-        is_duplicate_flagged=is_duplicate_flagged,
+        near_duplicate_sets=near_dup_sets, is_duplicate_flagged=is_duplicate_flagged,
         filenames=dataset.filenames, class_names=class_names,
+        js_label_scores=combined_label["js_label_scores"],
     )
 
     print("[6/6] Дорожная карта и статистика...")
@@ -145,7 +168,10 @@ async def run_full_pipeline(
     summary = generate_summary(
         targets=targets, n_classes=n_classes, class_names=class_names,
         imbalance_index=imbalance_index, n_label_errors=len(label_issue_indices),
-        n_duplicates=n_duplicates,
+        n_duplicates=n_duplicates, n_quality_issues=0,
+        balance_coefficient=balance_coeff,
+        n_controversial=int(combined_label["is_controversial"].sum()),
+        n_outliers=int(outlier_sep["is_outlier"].sum()),
     )
 
     results = {
@@ -155,6 +181,7 @@ async def run_full_pipeline(
 
     print(f"Анализ завершён. Готовность: {summary['readiness']}%")
     return results
+
 
 
 def _round_dict(obj, decimals=4):

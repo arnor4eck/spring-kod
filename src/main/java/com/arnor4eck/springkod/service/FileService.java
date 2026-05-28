@@ -1,8 +1,10 @@
 package com.arnor4eck.springkod.service;
 
 import com.arnor4eck.springkod.entity.datasitory.Datasitory;
+import com.arnor4eck.springkod.entity.datasitory_file.DatasitoryFile;
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
 import com.arnor4eck.springkod.entity.datasitory_file.ImageUrl;
+import com.arnor4eck.springkod.repository.DatasitoryFileRepository;
 import com.arnor4eck.springkod.repository.DatasitoryRepository;
 import com.arnor4eck.springkod.repository.ImageUrlRepository;
 import com.arnor4eck.springkod.util.exception.DatasitoryNotFoundException;
@@ -41,6 +43,8 @@ public class FileService {
     private final TikaFileValidator tikaFileValidator;
 
     private final KeyGenerator keyGenerator;
+
+    private final DatasitoryFileRepository datasitoryFileRepository;
 
     public void saveImages(List<MultipartFile> files, long datasitoryId){
         log.info("Сохранение {} фото для датазитория {}", files.size(), datasitoryId);
@@ -118,6 +122,11 @@ public class FileService {
 
     public void saveFile(MultipartFile file, long datasitoryId,
                          FileType fileType) {
+        if(isThisTypeAlreadyExists(fileType)){
+            log.info("Файл типа {} для {} уже существует, он будет удален и переданный файл будет сохранен", fileType, datasitoryId);
+            datasitoryFileRepository.deleteByFileType(fileType);
+        }
+
         switch (fileType) {
             case MARKUP_FILE:
                 saveMarkup(file, datasitoryId);
@@ -149,7 +158,17 @@ public class FileService {
         FileImpl fileImpl = map(file);
 
         Datasitory datasitory = findDatasitoryById(datasitoryId);
+
         log.info("Сохранение {} файла {} для датазитория {}", fileImpl.getFileType().name(), keyGenerator.generateKey(fileImpl.getOriginalFilename(), datasitoryId), datasitoryId);
         fileSaver.save(new FileSaveClass(keyGenerator.generateKey(fileImpl.getOriginalFilename(), datasitoryId), fileImpl), datasitory);
+    }
+
+    private boolean isThisTypeAlreadyExists(FileType fileType) {
+        return datasitoryFileRepository.findByFileType(fileType).isPresent();
+    }
+
+    public List<DatasitoryFile> loadBeatImages(long datasitoryId) {
+        return datasitoryFileRepository
+                    .findByDatasitoryIdAndFileType(datasitoryId, FileType.UNKNOWN_IMAGE);
     }
 }

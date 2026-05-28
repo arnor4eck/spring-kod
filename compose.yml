@@ -52,6 +52,8 @@ services:
     command: java -jar app.jar
 
   ml_service:
+    ports:
+      - "8000:8000"
     deploy:
       resources:
         limits:
@@ -59,8 +61,23 @@ services:
         reservations:
           memory: 2G
     build:
-      context: ml-service/.
+      context: ./ml-service
       dockerfile: Dockerfile
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      BACKEND: ${BACKEND}
+    ports:
+      - "3000:80"
+    container_name: react-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
     networks:
       - app-network
 

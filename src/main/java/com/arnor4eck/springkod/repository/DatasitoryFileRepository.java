@@ -26,4 +26,10 @@ public interface DatasitoryFileRepository extends JpaRepository<DatasitoryFile, 
     @Transactional
     @Query("DELETE FROM DatasitoryFile df WHERE df.fileId IN :fileIds")
     void deleteAllByFileIds(@Param("fileIds") List<String> fileIds);
+
+    Optional<DatasitoryFile> findByFileType(FileType fileType);
+
+    @Modifying
+    @Transactional
+    void deleteByFileType(FileType fileType);
 }

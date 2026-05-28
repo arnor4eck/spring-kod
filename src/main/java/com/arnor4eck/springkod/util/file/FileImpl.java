@@ -1,7 +1,6 @@
 package com.arnor4eck.springkod.util.file;
 
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
-import org.jspecify.annotations.Nullable;
 import org.springframework.util.MimeType;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,12 +53,12 @@ public final class FileImpl implements MultipartFile {
     }
 
     @Override
-    public @Nullable String getOriginalFilename() {
+    public String getOriginalFilename() {
         return originalName;
     }
 
     @Override
-    public @Nullable String getContentType() {
+    public String getContentType() {
         return contentType;
     }
 

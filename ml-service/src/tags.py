@@ -3,16 +3,19 @@
 """Присвоение тегов объектам."""
 
 import numpy as np
-from typing import List
+from typing import List, Optional
 
 THRESHOLDS = {
     "label_error": 0.2,
     "label_suspicious": 0.5,
     "hard_case": 0.8,
     "confident": 0.95,
-    "novelty": 0.3,
+    "novelty": 0.3,          
     "deficit": 0.3,
     "reliable_conf": 0.9,
+    # НОВЫЕ пороги
+    "controversial_jsd": 0.1,
+    "outlier_entropy": 0.5,
 }
 
 
@@ -46,6 +49,10 @@ def compute_tags(
     is_duplicate: np.ndarray,
     deficit_per_obj: np.ndarray,
     near_duplicate_sets: List[List[int]],
+    # НОВЫЕ параметры
+    js_label_scores: Optional[np.ndarray] = None,
+    is_outlier_flag: Optional[np.ndarray] = None,
+    is_novelty_flag: Optional[np.ndarray] = None,
 ) -> List[List[str]]:
     """Присваивает теги с учётом приоритетов и взаимоисключений."""
     n = len(label_scores)
@@ -67,10 +74,11 @@ def compute_tags(
         has_label_issue = False
         is_hard = entropy[i] > THRESHOLDS["hard_case"]
         is_confident = confidence[i] > THRESHOLDS["confident"]
-        is_novel = outlier_scores[i] < THRESHOLDS["novelty"]
+        is_novel_candidate = outlier_scores[i] < THRESHOLDS["novelty"]
         is_def_deficit = deficit_per_obj[i] > THRESHOLDS["deficit"]
         is_dup = is_duplicate_flagged[i]
 
+        # --- Ошибки разметки (Cleanlab) ---
         if label_scores[i] < THRESHOLDS["label_error"]:
             tags[i].append("label_error")
             has_label_issue = True
@@ -78,29 +86,52 @@ def compute_tags(
             tags[i].append("label_suspicious")
             has_label_issue = True
 
+        # --- НОВОЕ: Спорный случай (JSD) ---
+        if (not has_label_issue and
+            js_label_scores is not None and
+            js_label_scores[i] > THRESHOLDS["controversial_jsd"]):
+            tags[i].append("controversial")
+
+        # --- Дубликат ---
         if is_dup:
             tags[i].append("duplicate")
 
+        # --- Сложный случай ---
         if is_hard:
             tags[i].append("hard_case")
 
+        # --- Дефицитный класс ---
         if is_def_deficit:
             tags[i].append("deficit_class")
 
-        if not has_label_issue and not is_dup and is_novel:
-            tags[i].append("novelty")
+        # --- НОВОЕ: Новизна vs Выброс (через флаги из analyze.py) ---
+        if is_novel_candidate and not has_label_issue and not is_dup:
+            if is_outlier_flag is not None and is_novelty_flag is not None:
+                # Используем готовое разделение из separate_outlier_novelty()
+                if is_outlier_flag[i]:
+                    tags[i].append("outlier")
+                elif is_novelty_flag[i]:
+                    tags[i].append("novelty")
+            else:
+                tags[i].append("novelty")
 
+        # --- Уверенное предсказание ---
         if not has_label_issue and not is_hard and is_confident:
             tags[i].append("confident_prediction")
 
-        no_problems = not has_label_issue and not is_dup and not is_hard
+        # --- Надёжный ---
+        no_problems = (
+            not has_label_issue and not is_dup and not is_hard and
+            (js_label_scores is None or js_label_scores[i] <= THRESHOLDS["controversial_jsd"])
+        )
         if no_problems and confidence[i] > THRESHOLDS["reliable_conf"]:
             tags[i].append("reliable")
 
+        # --- Если совсем без тегов — присваиваем хотя бы один ---
         if not tags[i]:
             if is_confident:
                 tags[i].append("confident_prediction")
-            elif is_novel:
+            elif is_novel_candidate:
                 tags[i].append("novelty")
             else:
                 tags[i].append("hard_case")

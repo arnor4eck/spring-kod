@@ -1,8 +1,8 @@
 package com.arnor4eck.springkod.controller;
 
 import com.arnor4eck.springkod.entity.datasitory_file.FileType;
-import com.arnor4eck.springkod.service.DatasitoryService;
 import com.arnor4eck.springkod.service.FileService;
+import com.arnor4eck.springkod.util.dto.file.BeatFileDto;
 import com.arnor4eck.springkod.util.dto.file.FileUrlDto;
 import com.arnor4eck.springkod.util.file.FileImpl;
 import lombok.AllArgsConstructor;
@@ -27,8 +27,6 @@ public class FileController {
 
     private final FileService fileService;
 
-    private final DatasitoryService datasitoryService;
-
     @PostMapping("/images/{id}")
     @PreAuthorize("@datasitoryService.isOwner(authentication, #datasitoryId)")
     public ResponseEntity<@NonNull Void> saveImages(@PathVariable("id") long datasitoryId,
@@ -44,6 +42,15 @@ public class FileController {
         return ResponseEntity.ok(fileService.loadImages(datasitoryId)
                 .stream()
                 .map(FileUrlDto::new)
+                .toList());
+    }
+
+    @GetMapping("/images/beat/{id}")
+    @PreAuthorize("@datasitoryService.hasAccess(authentication, #datasitoryId)")
+    public ResponseEntity<@NonNull List<BeatFileDto>> getBeatImages(@PathVariable("id") long datasitoryId) {
+        return ResponseEntity.ok(fileService.loadBeatImages(datasitoryId)
+                .stream()
+                .map(BeatFileDto::new)
                 .toList());
     }
 

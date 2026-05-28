@@ -15,27 +15,22 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CsvEditor {
 
+    private static final CSVFormat CSV_FORMAT = CSVFormat.DEFAULT
+            .withDelimiter(';')
+            .withTrim();
+
     public static byte[] removeRowByFirstColumnValue(byte[] csvBytes, List<String> valuesToRemove) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        HashSet<String> shouldBeRemoved = new HashSet<>(valuesToRemove);
-
-        try (Reader reader = new InputStreamReader(
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             Reader reader = new InputStreamReader(
                 new ByteArrayInputStream(csvBytes), StandardCharsets.UTF_8)) {
+            HashSet<String> shouldBeRemoved = new HashSet<>(valuesToRemove);
 
-            CSVFormat csvFormat = CSVFormat.DEFAULT
-                    .withDelimiter(';')
-                    .withTrim();
+            List<CSVRecord> allRecords = getAllRecords(reader);
 
-            List<CSVRecord> allRecords = csvFormat.parse(reader).getRecords();
-
-            if (allRecords.isEmpty()) {
+            if(allRecords.isEmpty())
                 return outputStream.toByteArray();
-            }
 
-            List<String> headers = new ArrayList<>();
-            for (int i = 0; i < allRecords.get(0).size(); i++) {
-                headers.add(allRecords.get(0).get(i));
-            }
+            List<String> headers = getAllHeaders(allRecords);
 
             try (Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
                  CSVPrinter printer = new CSVPrinter(writer,
@@ -57,45 +52,49 @@ public class CsvEditor {
 
                 printer.flush();
             }
-
+            return outputStream.toByteArray();
         } catch (Exception ex) {
             log.error("Ошибка при удалении строки", ex);
             throw new FileReadException("Error reading csv");
         }
-
-        return outputStream.toByteArray();
     }
 
+    private static List<CSVRecord> getAllRecords(Reader reader) throws IOException {
+        return CSV_FORMAT.parse(reader).getRecords();
+    }
+
+    private static List<String> getAllHeaders(List<CSVRecord> records) {
+        if(records.isEmpty())
+            return Collections.emptyList();
+
+        List<String> headers = new ArrayList<>();
+        for (int i = 0; i < records.getFirst().size(); i++) {
+            headers.add(records.getFirst().get(i));
+        }
+
+        return headers;
+    }
 
     public static byte[] updateSecondColumnByFirstColumnValue(
             byte[] csvBytes,
             List<FileToUpdate> filesToUpdate) {
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        
-        Map<String, String> filesValues = new HashMap<>(filesToUpdate.size());
-
-        for(FileToUpdate fileToUpdate : filesToUpdate){
-            filesValues.put(fileToUpdate.fileName(), fileToUpdate.newLabel());
-        }
-
-        try (Reader reader = new InputStreamReader(
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             Reader reader = new InputStreamReader(
                 new ByteArrayInputStream(csvBytes), StandardCharsets.UTF_8)) {
 
-            CSVFormat csvFormat = CSVFormat.DEFAULT
-                    .withDelimiter(';')
-                    .withTrim();
+            Map<String, String> filesValues = new HashMap<>(filesToUpdate.size());
 
-            List<CSVRecord> allRecords = csvFormat.parse(reader).getRecords();
+            for(FileToUpdate fileToUpdate : filesToUpdate){
+                filesValues.put(fileToUpdate.fileName(), fileToUpdate.newLabel());
+            }
 
-            if (allRecords.isEmpty()) {
+            List<CSVRecord> allRecords = getAllRecords(reader);
+
+            if(allRecords.isEmpty())
                 return outputStream.toByteArray();
-            }
 
-            List<String> headers = new ArrayList<>();
-            for (int i = 0; i < allRecords.get(0).size(); i++) {
-                headers.add(allRecords.get(0).get(i));
-            }
+            List<String> headers = getAllHeaders(allRecords);
 
             try (Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
                  CSVPrinter printer = new CSVPrinter(writer,
@@ -127,12 +126,11 @@ public class CsvEditor {
                 }
 
                 printer.flush();
+                return outputStream.toByteArray();
             }
         } catch (Exception exception) {
             log.error("Ошибка при редактировании CSV", exception);
             throw new FileReadException("Error reading csv");
         }
-
-        return outputStream.toByteArray();
     }
 }

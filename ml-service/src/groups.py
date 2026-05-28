@@ -22,6 +22,7 @@ def split_into_groups(
     class_names: Optional[List[str]] = None,
     quality_scores: Optional[np.ndarray] = None,
     quality_issues: Optional[np.ndarray] = None,
+    js_label_scores: Optional[np.ndarray] = None,
 ) -> Dict[str, Any]:
     """Разбивает объекты на 5 групп."""
     n = len(tags)
@@ -31,6 +32,25 @@ def split_into_groups(
         filenames = [str(i) for i in range(n)]
     if class_names is None:
         class_names = [str(i) for i in range(len(set(targets)))]
+
+    # Собираем маску quality_issues из тегов, если не передана извне
+    if quality_issues is None:
+        quality_issues = np.zeros(n, dtype=bool)
+        for i in range(n):
+            if "outlier" in tags[i] or "controversial" in tags[i]:
+                quality_issues[i] = True
+
+    # Считаем quality_score
+    if quality_scores is None:
+        quality_scores = np.ones(n)
+        for i in range(n):
+            if "outlier" in tags[i] or "controversial" in tags[i]:
+                scores = []
+                if "outlier" in tags[i]:
+                    scores.append(outlier_scores[i])
+                if "controversial" in tags[i] and js_label_scores is not None:
+                    scores.append(1.0 - js_label_scores[i])
+                quality_scores[i] = min(scores) if scores else 1.0
 
     reliable_mask = _get_reliable_mask(tags, is_duplicate_flagged, quality_issues)
     reliable_indices = indices[reliable_mask]
@@ -42,9 +62,7 @@ def split_into_groups(
 
     duplicate_groups = _build_duplicate_groups(near_duplicate_sets, is_duplicate_flagged, filenames)
 
-    quality_issue_indices = np.array([], dtype=int)
-    if quality_issues is not None:
-        quality_issue_indices = indices[quality_issues]
+    quality_issue_indices = indices[quality_issues]
 
     all_objects = _build_all_objects_list(
         indices, tags, utility_scores, entropy, confidence,
@@ -69,7 +87,9 @@ def _get_reliable_mask(tags, is_duplicate_flagged, quality_issues):
     n = len(tags)
     mask = np.ones(n, dtype=bool)
     for i in range(n):
-        if any(t in tags[i] for t in ["label_error", "label_suspicious", "duplicate"]):
+        if any(t in tags[i] for t in [
+            "label_error", "label_suspicious", "duplicate", "controversial", "outlier"
+        ]):
             mask[i] = False
         if is_duplicate_flagged[i]:
             mask[i] = False
@@ -89,6 +109,19 @@ def _get_label_issue_mask(tags, targets, suggested_labels):
     return mask
 
 
+def _tag_priority(tag_list):
+    """Приоритет тега для сортировки (0 = самый важный)."""
+    if "label_error" in tag_list:
+        return 0
+    if "label_suspicious" in tag_list:
+        return 1
+    if "controversial" in tag_list:
+        return 2
+    if "outlier" in tag_list:
+        return 3
+    return 4
+
+
 def _build_all_objects_list(indices, tags, utility_scores, entropy, confidence, label_scores, outlier_scores, filenames):
     """Группа 1: Все объекты с метриками."""
     objects = []
@@ -102,10 +135,7 @@ def _build_all_objects_list(indices, tags, utility_scores, entropy, confidence, 
             "label_score": float(label_scores[i]),
             "outlier_score": float(outlier_scores[i]),
         })
-    objects.sort(key=lambda x: (
-        0 if "label_error" in x["tags"] else
-        1 if "label_suspicious" in x["tags"] else 2
-    ))
+    objects.sort(key=lambda x: _tag_priority(x["tags"]))
     return objects
 
 
@@ -156,11 +186,14 @@ def _build_duplicate_groups(near_duplicate_sets, is_duplicate_flagged, filenames
 
 
 def _build_quality_issues_list(indices, tags, filenames, quality_scores):
-    """Группа 5: Файлы плохого качества."""
+    """Группа 5: Файлы плохого качества (выбросы, спорные, тех. проблемы)."""
     objects = []
     for i in indices:
-        obj = {"file_name": filenames[i], "tags": tags[i]}
-        if quality_scores is not None:
-            obj["quality_score"] = float(quality_scores[i])
+        obj = {
+            "file_name": filenames[i],
+            "tags": tags[i],
+            "quality_score": float(quality_scores[i]) if quality_scores is not None else 0.0,
+        }
         objects.append(obj)
+    objects.sort(key=lambda x: x["quality_score"])
     return objects
