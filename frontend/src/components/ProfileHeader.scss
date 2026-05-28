@@ -1,0 +1,138 @@
+$color-text-secondary: #6B7280;
+$color-primary-light: #F3F0FF;
+$transition-default: all 0.2s ease;
+$input-height: 40px;
+$border-width: 2px;
+$radius: 10px;
+$font-family: 'Inter', sans-serif;
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-border: #E5E7EB;
+$color-primary: #4D1FB9;
+$color-placeholder: #9CA3AF;
+
+.profile-header {
+  border-bottom: 1px solid $color-border;
+  background-color: $color-bg;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.profile-header__top {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+
+  @media (width <= 768px) {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+}
+
+.profile-header__user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-header__user-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-primary;
+}
+
+.profile-header__username {
+  font-size: 18px;
+  color: $color-text;
+  margin: 0;
+}
+
+.profile-header__search {
+  flex: 1;
+  max-width: 400px;
+  min-width: 200px;
+
+  @media (width <= 768px) {
+    max-width: none;
+    width: 100%;
+  }
+}
+
+.profile-header__search-input {
+  width: 100%;
+  height: $input-height;
+  border: $border-width solid $color-border;
+  border-radius: $radius;
+  padding: 0 16px;
+  font-family: $font-family;
+  font-size: 14px;
+  color: $color-text;
+  background: $color-bg;
+  outline: none;
+  box-sizing: border-box;
+  transition: $transition-default;
+
+  &::placeholder {
+    color: $color-placeholder;
+  }
+
+  &:focus {
+    border-color: $color-primary;
+  }
+}
+
+.profile-header__nav {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  gap: 32px;
+
+  @media (width <= 768px) {
+    padding: 0 20px;
+    gap: 24px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (width <= 480px) {
+    gap: 16px;
+  }
+}
+
+.profile-header__link {
+  padding: 12px 4px;
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text-secondary;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: $transition-default;
+  white-space: nowrap;
+
+  &:hover {
+    color: $color-text;
+    border-bottom-color: $color-border;
+  }
+
+  &--active {
+    color: $color-primary;
+    border-bottom-color: $color-primary;
+
+    &:hover {
+      border-bottom-color: $color-primary;
+    }
+  }
+}

@@ -1,0 +1,260 @@
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-text-secondary: #6B7280;
+$color-border: #E5E7EB;
+$color-border-light: #F3F4F6;
+$color-primary: #4D1FB9;
+$color-primary-light: #F3F0FF;
+$color-error: #EF4444;
+$color-error-light: #FEE2E2;
+$color-placeholder: #9CA3AF;
+$font-family: 'Inter', sans-serif;
+$radius: 10px;
+$radius-sm: 8px;
+$border-width: 2px;
+$input-height: 40px;
+$transition-default: all 0.2s ease;
+
+.create-dataset-page {
+  min-height: 100vh;
+  background-color: $color-bg;
+  font-family: $font-family;
+  color: $color-text;
+}
+
+.create-dataset-page__content {
+  max-width: 800px;
+  padding: 32px 24px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.create-dataset-page__header {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.create-dataset-page__back-btn {
+  background: none;
+  border: none;
+  font-family: $font-family;
+  font-size: 14px;
+  color: $color-primary;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: $transition-default;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.create-dataset-page__title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: $color-text;
+
+  @media (width <= 768px) {
+    font-size: 20px;
+  }
+}
+
+.create-dataset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.create-dataset-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-dataset-form__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.create-dataset-form__required {
+  color: $color-error;
+}
+
+.create-dataset-form__input {
+  width: 100%;
+  height: $input-height;
+  border: $border-width solid $color-border;
+  border-radius: $radius;
+  padding: 0 12px;
+  font-family: $font-family;
+  font-size: 14px;
+  color: $color-text;
+  background: $color-bg;
+  outline: none;
+  box-sizing: border-box;
+  transition: $transition-default;
+
+  &::placeholder {
+    color: $color-placeholder;
+  }
+
+  &:focus {
+    border-color: $color-primary;
+  }
+
+  &--error {
+    border-color: $color-error;
+
+    &:focus {
+      border-color: $color-error;
+    }
+  }
+}
+
+.create-dataset-form__textarea {
+  width: 100%;
+  border: $border-width solid $color-border;
+  border-radius: $radius;
+  padding: 12px;
+  font-family: $font-family;
+  font-size: 14px;
+  color: $color-text;
+  background: $color-bg;
+  outline: none;
+  box-sizing: border-box;
+  resize: vertical;
+  transition: $transition-default;
+
+  &::placeholder {
+    color: $color-placeholder;
+  }
+
+  &:focus {
+    border-color: $color-primary;
+  }
+}
+
+.create-dataset-form__radio-group {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.create-dataset-form__radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: $color-text;
+  cursor: pointer;
+
+  input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: $color-primary;
+  }
+}
+
+.create-dataset-form__error {
+  font-size: 12px;
+  color: $color-error;
+  margin-top: 4px;
+}
+
+.create-dataset-form__actions {
+  margin-top: 16px;
+}
+
+.create-dataset-form__submit-btn {
+  width: 100%;
+  height: $input-height;
+  background-color: $color-primary;
+  border: none;
+  border-radius: $radius;
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-bg;
+  cursor: pointer;
+  transition: $transition-default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: darken($color-primary, 5%);
+  }
+
+  &:disabled {
+    background-color: $color-placeholder;
+    cursor: not-allowed;
+  }
+}
+
+.loading,
+.error {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-family;
+  font-size: 14px;
+}
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-family;
+  font-size: 14px;
+  color: $color-text-secondary;
+  background-color: $color-bg;
+}
+
+.loading__container {
+  max-width: 400px;
+  width: 100%;
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.loading__spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid $color-border;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading__message {
+  margin: 0;
+  font-size: 14px;
+  color: $color-text-secondary;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error {
+  color: $color-error;
+}

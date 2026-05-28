@@ -1,0 +1,97 @@
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-text-secondary: #6B7280;
+$color-border: #E5E7EB;
+$color-border-light: #F3F4F6;
+$color-primary: #4D1FB9;
+$color-primary-light: #F3F0FF;
+$color-placeholder: #9CA3AF;
+$font-family: 'Inter', sans-serif;
+$radius: 10px;
+$radius-sm: 8px;
+$transition-default: all 0.2s ease;
+
+.my-datasets {
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: $font-family;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (width <= 768px) {
+    padding: 20px;
+    gap: 16px;
+  }
+}
+
+.my-datasets__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  @media (width <= 480px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.my-datasets__title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: $color-text;
+  font-family: $font-family;
+
+  @media (width <= 768px) {
+    font-size: 16px;
+  }
+}
+
+.my-datasets__create-btn {
+  background: $color-primary;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 8px 16px;
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-bg;
+  cursor: pointer;
+  transition: $transition-default;
+
+  &:hover {
+    background: darken($color-primary, 5%);
+  }
+
+  @media (width <= 768px) {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+.my-datasets__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-datasets__empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: $color-text-secondary;
+  font-size: 14px;
+  margin: 0;
+  font-family: $font-family;
+
+  @media (width <= 768px) {
+    padding: 30px 20px;
+    font-size: 13px;
+  }
+}

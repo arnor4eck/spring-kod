@@ -1,0 +1,107 @@
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-text-secondary: #6B7280;
+$color-border: #E5E7EB;
+$color-border-light: #F3F4F6;
+$color-primary: #4D1FB9;
+$radius: 10px;
+$radius-sm: 8px;
+$transition-default: all 0.2s ease;
+
+.duplicates-groups {
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (width <= 768px) {
+    padding: 16px;
+  }
+}
+
+.duplicates-groups__scroll-wrapper {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $color-border-light;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-text-secondary;
+    border-radius: 3px;
+
+    &:hover {
+      background: $color-primary;
+    }
+  }
+}
+
+.duplicates-groups__group {
+  margin-bottom: 24px;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-sm;
+  overflow: hidden;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.duplicates-groups__group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: $color-border-light;
+  border-bottom: 1px solid $color-border;
+}
+
+.duplicates-groups__group-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.duplicates-groups__group-count {
+  font-size: 12px;
+  color: $color-text-secondary;
+}
+
+.duplicates-groups__group-content {
+  padding: 16px;
+}
+
+.duplicates-groups__images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 12px;
+
+  @media (width <= 640px) {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 8px;
+  }
+}
+
+.duplicates-groups__thumbnail {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border;
+  transition: $transition-default;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $color-primary;
+    transform: scale(1.02);
+  }
+}

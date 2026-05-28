@@ -1,0 +1,197 @@
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-text-secondary: #6B7280;
+$color-border: #E5E7EB;
+$color-border-light: #F3F4F6;
+$color-primary: #4D1FB9;
+$color-primary-light: #F3F0FF;
+$color-error: #EF4444;
+$color-error-light: #FEE2E2;
+$color-placeholder: #9CA3AF;
+$font-family: 'Inter', sans-serif;
+$radius: 10px;
+$radius-sm: 8px;
+$transition-default: all 0.2s ease;
+
+.photo-upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: $font-family;
+}
+
+.photo-upload-field__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.photo-upload-field__required {
+  color: $color-error;
+  margin-left: 4px;
+}
+
+.photo-upload-field__dropzone {
+  border: 2px dashed $color-border;
+  border-radius: $radius;
+  background: $color-bg;
+  padding: 32px 24px;
+  cursor: pointer;
+  transition: $transition-default;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: $color-primary;
+    background: $color-primary-light;
+  }
+
+  &--dragging {
+    border-color: $color-primary;
+    background: $color-primary-light;
+  }
+}
+
+.photo-upload-field__placeholder {
+  text-align: center;
+}
+
+.photo-upload-field__icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+  color: $color-text-secondary;
+  transition: $transition-default;
+}
+
+.photo-upload-field__dropzone:hover {
+  .photo-upload-field__icon {
+    color: $color-primary;
+  }
+}
+
+.photo-upload-field__text {
+  font-size: 14px;
+  color: $color-text-secondary;
+  margin: 0 0 8px 0;
+}
+
+.photo-upload-field__hint {
+  font-size: 12px;
+  color: $color-placeholder;
+  margin: 0;
+}
+
+.photo-upload-field__error {
+  font-size: 12px;
+  color: $color-error;
+  margin-top: 4px;
+}
+
+.photo-upload-field__input {
+  display: none;
+}
+
+.photo-upload-field__gallery {
+  margin-top: 8px;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 12px;
+  background: $color-bg;
+}
+
+.photo-upload-field__gallery-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: $color-text-secondary;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid $color-border-light;
+}
+
+.photo-upload-field__gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $color-border-light;
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-placeholder;
+    border-radius: 2px;
+
+    &:hover {
+      background: $color-text-secondary;
+    }
+  }
+
+  @media (width <= 640px) {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 8px;
+  }
+}
+
+.photo-upload-field__photo {
+  position: relative;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background: $color-bg;
+  transition: $transition-default;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.photo-upload-field__photo-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-upload-field__photo-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-default;
+  padding: 0;
+  font-size: 12px;
+  color: white;
+  line-height: 1;
+
+  &:hover {
+    background: $color-error;
+  }
+}
+
+.photo-upload-field__photo-name {
+  padding: 6px;
+  font-size: 9px;
+  color: $color-text-secondary;
+  text-align: center;
+  word-break: break-all;
+  background: $color-border-light;
+}

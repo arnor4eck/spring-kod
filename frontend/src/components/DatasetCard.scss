@@ -1,0 +1,165 @@
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-text-secondary: #6B7280;
+$color-border: #E5E7EB;
+$color-border-light: #F3F4F6;
+$color-primary: #4D1FB9;
+$color-primary-light: #F3F0FF;
+$color-danger: #EF4444;
+$color-danger-light: #FEE2E2;
+$color-placeholder: #9CA3AF;
+$color-star: #FBBF24;
+$font-family: 'Inter', sans-serif;
+$radius: 10px;
+$radius-sm: 8px;
+$transition-default: all 0.2s ease;
+
+.dataset-card {
+  background: $color-bg;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-sm;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: $transition-default;
+
+  &:hover {
+    border-color: $color-border;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.dataset-card__name {
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+  margin: 0;
+  font-family: $font-family;
+}
+
+.dataset-card__description {
+  font-size: 13px;
+  color: $color-text-secondary;
+  line-height: 1.4;
+  margin: 0;
+  font-family: $font-family;
+}
+
+.dataset-card__meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: $color-placeholder;
+  font-family: $font-family;
+}
+
+.dataset-card__type {
+  padding: 2px 6px;
+  background: $color-border-light;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: $color-text-secondary;
+}
+
+.dataset-card__date {
+  color: $color-placeholder;
+}
+
+.dataset-card__creator {
+  font-size: 12px;
+  color: $color-text-secondary;
+  padding-top: 6px;
+  border-top: 1px solid $color-border-light;
+  font-family: $font-family;
+}
+
+.dataset-card__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid $color-border-light;
+
+  @media (width <= 480px) {
+    flex-direction: column;
+  }
+}
+
+.dataset-card__analytics-btn {
+  background: $color-primary-light;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 8px 16px;
+  font-family: $font-family;
+  font-size: 13px;
+  font-weight: 500;
+  color: $color-primary;
+  cursor: pointer;
+  transition: $transition-default;
+  flex: 1;
+
+  &:hover {
+    background: darken($color-primary-light, 5%);
+  }
+
+  @media (width <= 480px) {
+    width: 100%;
+  }
+}
+
+.dataset-card__star-btn {
+  background: $color-border-light;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 8px 16px;
+  font-family: $font-family;
+  font-size: 13px;
+  font-weight: 500;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-default;
+  flex: 1;
+
+  &:hover {
+    background: darken($color-border-light, 5%);
+  }
+
+  &--active {
+    background: $color-primary-light;
+    color: $color-primary;
+
+    &:hover {
+      background: darken($color-primary-light, 5%);
+    }
+  }
+
+  @media (width <= 480px) {
+    width: 100%;
+  }
+}
+
+.dataset-card__delete-btn {
+  background: $color-danger-light;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 8px 16px;
+  font-family: $font-family;
+  font-size: 13px;
+  font-weight: 500;
+  color: $color-danger;
+  cursor: pointer;
+  transition: $transition-default;
+  flex: 1;
+
+  &:hover {
+    background: darken($color-danger-light, 5%);
+  }
+
+  @media (width <= 480px) {
+    width: 100%;
+  }
+}

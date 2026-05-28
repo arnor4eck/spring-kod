@@ -1,0 +1,42 @@
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-text-secondary: #6B7280;
+$color-border: #E5E7EB;
+$font-family: 'Inter', sans-serif;
+$radius: 10px;
+
+.popular-datasets {
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: $font-family;
+}
+
+.popular-datasets__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: $color-text;
+  font-family: $font-family;
+}
+
+.popular-datasets__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popular-datasets__empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: $color-text-secondary;
+  font-size: 13px;
+  margin: 0;
+  font-family: $font-family;
+}

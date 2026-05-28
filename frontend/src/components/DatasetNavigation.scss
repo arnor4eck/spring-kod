@@ -1,0 +1,65 @@
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-text-secondary: #6B7280;
+$color-border: #E5E7EB;
+$color-primary: #4D1FB9;
+$font-family: 'Inter', sans-serif;
+$transition-default: all 0.2s ease;
+
+.dataset-navigation {
+  display: flex;
+  gap: 8px;
+  background: $color-bg;
+  border-bottom: 1px solid $color-border;
+  padding: 0 24px;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  &::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $color-border;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-primary;
+  }
+
+  @media (width <= 768px) {
+    padding: 0 16px;
+    gap: 4px;
+  }
+}
+
+.dataset-navigation__link {
+  padding: 12px 16px;
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text-secondary;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: $transition-default;
+  display: inline-block;
+
+  &:hover {
+    color: $color-text;
+    border-bottom-color: $color-border;
+  }
+
+  &--active {
+    color: $color-primary;
+    border-bottom-color: $color-primary;
+
+    &:hover {
+      border-bottom-color: $color-primary;
+    }
+  }
+
+  @media (width <= 768px) {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}

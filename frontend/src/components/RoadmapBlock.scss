@@ -1,0 +1,38 @@
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-text-secondary: #6B7280;
+$color-border: #E5E7EB;
+$color-border-light: #F3F4F6;
+$color-primary: #4D1FB9;
+$color-primary-light: #F3F0FF;
+$font-family: 'Inter', sans-serif;
+$radius: 10px;
+$radius-sm: 8px;
+$transition-default: all 0.2s ease;
+
+.roadmap-block {
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius;
+  padding: 24px;
+
+  @media (width <= 640px) {
+    padding: 20px;
+    gap: 12px;
+    flex-direction: column;
+  }
+}
+
+.roadmap-block__text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: $color-text;
+  margin: 0;
+  font-family: $font-family;
+  font-weight: 500;
+
+  @media (width <= 768px) {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+}

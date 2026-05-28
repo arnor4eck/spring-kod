@@ -1,0 +1,99 @@
+$color-bg: #FFFFFF;
+$color-text: #111827;
+$color-text-secondary: #6B7280;
+$color-border: #E5E7EB;
+$color-border-light: #F3F4F6;
+$color-primary: #4D1FB9;
+$color-primary-light: #F3F0FF;
+$color-danger: #EF4444;
+$color-danger-light: #FEE2E2;
+$font-family: 'Inter', sans-serif;
+$radius: 10px;
+$radius-sm: 8px;
+
+.settings {
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.settings__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: $color-text;
+}
+
+.settings__item {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings__btn {
+  background: $color-primary-light;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 10px 16px;
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-primary;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  text-align: center;
+
+  &:hover {
+    background: darken($color-primary-light, 5%);
+  }
+
+  &--logout {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+
+    &:hover {
+      background: $color-border-light;
+    }
+  }
+
+  &--danger {
+    background: $color-danger-light;
+    color: $color-danger;
+
+    &:hover {
+      background: darken($color-danger-light, 5%);
+    }
+  }
+}
+
+.settings__confirm {
+  background: $color-border-light;
+  border-radius: $radius-sm;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings__confirm-text {
+  font-size: 13px;
+  color: $color-text-secondary;
+  margin: 0;
+  text-align: center;
+}
+
+.settings__confirm-buttons {
+  display: flex;
+  gap: 10px;
+
+  .settings__btn {
+    flex: 1;
+    padding: 8px 12px;
+  }
+}
